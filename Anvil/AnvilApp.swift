@@ -11,7 +11,16 @@ import SwiftUI
 struct AnvilApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView{
+                ContentView()
+                    .tabItem {
+                        Label("Content", systemImage: "square.and.arrow.up")
+                    }
+                CalculatorView()
+                    .tabItem {
+                        Label("Calculator", systemImage: "gear")
+                    }
+            }
         }
     }
 }
