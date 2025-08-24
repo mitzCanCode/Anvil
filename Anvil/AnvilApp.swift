@@ -12,9 +12,9 @@ struct AnvilApp: App {
     var body: some Scene {
         WindowGroup {
             TabView{
-                ContentView()
+                DashboardView()
                     .tabItem {
-                        Label("Content", systemImage: "square.and.arrow.up")
+                        Label("Home", systemImage: "square.and.arrow.up")
                     }
                 CalculatorView()
                     .tabItem {

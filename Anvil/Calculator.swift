@@ -1,4 +1,7 @@
 import SwiftUI
+import UIKit
+import AlertToast
+
 
 struct ConversionCategory: Identifiable {
     let id = UUID()
@@ -8,11 +11,42 @@ struct ConversionCategory: Identifiable {
 }
 
 struct CalculatorView: View {
+    @Environment(\.colorScheme) var colorScheme
+    private var palette: (base: Color, text: Color, red: Color, peach: Color, green: Color, blue: Color, overlay1: Color, accent: Color) {
+        if colorScheme == .dark {
+            return (
+                CatppuccinFrappe.base,
+                CatppuccinFrappe.text,
+                CatppuccinFrappe.red,
+                CatppuccinFrappe.peach,
+                CatppuccinFrappe.green,
+                CatppuccinFrappe.blue,
+                CatppuccinFrappe.overlay1,
+                CatppuccinFrappe.mauve // accent
+            )
+        } else {
+            return (
+                CatppuccinLatte.base,
+                CatppuccinLatte.text,
+                CatppuccinLatte.red,
+                CatppuccinLatte.peach,
+                CatppuccinLatte.green,
+                CatppuccinLatte.blue,
+                CatppuccinLatte.overlay1,
+                CatppuccinLatte.blue // accent
+            )
+        }
+    }
     @State private var inputValue: String = ""
     @State private var fromUnit: String = "MB"
     @State private var toUnit: String = "GB"
     @State private var result: String = "0"
     @State private var selectedCategoryIndex: Int = 0
+    
+    @State private var showToast: Bool = false
+    @State private var showSuccessToast: Bool = false
+    @State private var alertMessage: String = ""
+    
 
     let categories: [ConversionCategory] = [
         ConversionCategory(
@@ -69,42 +103,87 @@ struct CalculatorView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-
+                HStack{
+                    // Switch button between From and To
+                    Button(action: {
+                        Haptics.shared.light()
+                        let temp = fromUnit
+                        fromUnit = toUnit
+                        toUnit = temp
+                        // Only evaluate if inputValue is a valid number/expression
+                        if !inputValue.isEmpty && !"+−×÷^%".contains(inputValue.last!) {
+                            evaluateExpression()
+                        } else {
+                            result = "0"
+                        }
+//                        Keeping this in case i change my mind although i think its a bit much
+//                        alertMessage = "Value switched!"
+//                        showSuccessToast = true
+//                        showToast = true
+                    }) {
+                        Image(systemName: "arrow.up.arrow.down")
+                            .font(.title2)
+                            .foregroundColor(palette.accent)
+                    }
+                    
                 VStack(alignment: .trailing, spacing: 10) {
-                    HStack {
-                        Text("From:")
+                    HStack(alignment: .bottom) {
+                        Spacer()
+                        Button(action: {
+                            UIPasteboard.general.string = inputValue.isEmpty ? "0" : inputValue
+                            alertMessage = "Copied to clipboard!"
+                            showSuccessToast = true
+                            showToast = true
+                        }) {
+                            Text(inputValue.isEmpty ? "0" : inputValue)
+                                .font(.system(size: 50, weight: .bold, design: .monospaced))
+                                .lineLimit(1)
+                                .bold()
+                                .monospaced()
+                                .foregroundColor(palette.text)
+                        }
                         Picker("From", selection: $fromUnit) {
                             ForEach(selectedCategory.units, id: \.self) { unit in
-                                Text(unit).tag(unit)
+                                Text(unit)
+                                    .tag(unit)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
-                        Spacer()
-                        Text(inputValue.isEmpty ? "0" : inputValue)
-                            .font(.largeTitle)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .multilineTextAlignment(.trailing)
                     }
+                    
+                    
                     Divider()
-                    HStack {
-                        Text("To:")
+                        .padding(.leading)
+
+                    HStack(alignment: .bottom) {
+                        Button(action: {
+                            UIPasteboard.general.string = result
+                            alertMessage = "Copied to clipboard!"
+                            showSuccessToast = true
+                            showToast = true
+                        }) {
+                            Text(result)
+                                .font(.system(size: 50, weight: .bold, design: .monospaced))
+                                .lineLimit(1)
+                                .bold()
+                                .monospaced()
+                                .foregroundColor(palette.text)
+                        }
                         Picker("To", selection: $toUnit) {
                             ForEach(selectedCategory.units, id: \.self) { unit in
-                                Text(unit).tag(unit)
+                                Text(unit)
+                                    .monospaced()
+                                    .tag(unit)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
-                        .frame(width: 100)
-                        Spacer()
-                        Text(result)
-                            .font(.title)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
                     }
                 }
-                .padding(.horizontal)
-                
+                    
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
+
                 Spacer()
                 
                 VStack(spacing: 10) {
@@ -115,56 +194,88 @@ struct CalculatorView: View {
                                     Menu {
                                         ForEach(categories.indices, id: \.self) { index in
                                             Button(action: {
+                                                Haptics.shared.light()
                                                 selectedCategoryIndex = index
                                                 fromUnit = categories[index].units.first ?? ""
                                                 toUnit = categories[index].units.last ?? ""
-                                                result = "null Xp"
+                                                result = "0"
                                                 inputValue = ""
                                             }) {
-                                                Text(categories[index].name)
+                                                HStack {
+                                                    if index == selectedCategoryIndex {
+                                                        Image(systemName: "checkmark")
+                                                    }
+                                                    Text(categories[index].name)
+                                                        .monospaced()
+                                                }
                                             }
                                         }
                                     } label: {
-                                        Image(systemName: "slider.vertical.3")
-                                            .font(.title)
+                                        VStack{
+                                            Spacer()
+                                            Image(systemName: "slider.vertical.3")
+                                            Spacer()
+                                        }
+                                            .font(.largeTitle)
                                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
-                                            .foregroundColor(.white)
-                                            .background(self.buttonColor(button))
-                                            .cornerRadius(10)
+                                            .foregroundColor(palette.text)
+                                            .background(.ultraThinMaterial)
+                                            .cornerRadius(15)
+                                            .modifier(NeonGlow(color: self.buttonColor(button)))
                                     }
                                 } else {
                                     Button(action: {
+                                        Haptics.shared.light()
                                         self.buttonTapped(button)
                                     }) {
-                                        Text(button)
-                                            .font(.title)
+                                        VStack{
+                                            Spacer()
+                                            Text(button)
+                                                .font(.largeTitle)
+                                                .monospaced()
+                                                .foregroundColor(palette.text)
+                                            Spacer()
+
+                                        }
                                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
-                                            .foregroundColor(.white)
-                                            .background(self.buttonColor(button))
-                                            .cornerRadius(10)
+                                            .background(.ultraThinMaterial)
+                                            .cornerRadius(15)
+                                            .modifier(NeonGlow(color: self.buttonColor(button)))
                                     }
                                 }
                             }
                         }
                     }
                 }
-                .padding(.horizontal)
+//                .padding(.horizontal)
+                .padding()
             }
-            .navigationTitle("Dev Converter")
+            .toast(isPresenting: $showToast) {
+                AlertToast(
+                    displayMode: .banner(.pop),
+                    type: showSuccessToast ? .complete(palette.green) : .error(palette.red ),
+                    title: alertMessage
+                )
+            }
+            .background(palette.base)
+            .accentColor(palette.accent)
+            .navigationTitle("Calculator")
         }
     }
     
     private func buttonColor(_ button: String) -> Color {
         if button == "C" {
-            return .red
+            return palette.red
         } else if ["+", "−", "×", "÷", "^", "%"].contains(button) {
-            return .orange
+            return palette.peach
         } else if button == "⌫" {
-            return .gray
+            return palette.red
         } else if button == "CalcType" {
-            return .green
+            return palette.overlay1
+        } else if button == "switch" {
+            return palette.accent
         } else {
-            return .blue
+            return palette.blue
         }
     }
     
@@ -182,6 +293,9 @@ struct CalculatorView: View {
                 } else if !inputValue.isEmpty && "+−×÷^%".contains(inputValue.last!) {
                     // Do not evaluate if expression ends with operator
                     result = "null Xp"
+                    alertMessage = "Invalid expression"
+                    showSuccessToast = false
+                    showToast = true
                 } else {
                     evaluateExpression()
                 }
@@ -222,23 +336,80 @@ struct CalculatorView: View {
     }
     
     private func evaluateExpression() {
-        let expressionString = inputValue
+        // Preprocess inputValue:
+        var expr = inputValue
             .replacingOccurrences(of: "×", with: "*")
             .replacingOccurrences(of: "÷", with: "/")
             .replacingOccurrences(of: "−", with: "-")
-            .replacingOccurrences(of: "^", with: "**")
-            .replacingOccurrences(of: "%", with: " mod ")
-        
-        if let value = evaluateMathExpression(expressionString) {
-            convert(value: value)
+
+        // Do not evaluate if expression ends with operator
+        let operatorSet = CharacterSet(charactersIn: "+-*/^%")
+        if let last = expr.last, String(last).rangeOfCharacter(from: operatorSet) != nil {
+            result = "Error"
+            alertMessage = "Expression cannot end with operator"
+            showSuccessToast = false
+            showToast = true
+            return
+        }
+
+        // Helper to evaluate power: a^b => pow(a, b)
+        func replacePower(_ s: String) -> String {
+            var exp = s
+            // Regex for numbers or parens: ([0-9.]+|\([^()]*\))\^([0-9.]+|\([^()]*\))
+            let pattern = #"((?:[0-9.]+|\([^()]*\)))\^((?:[0-9.]+|\([^()]*\)))"#
+            let regex = try? NSRegularExpression(pattern: pattern)
+            while let match = regex?.firstMatch(in: exp, options: [], range: NSRange(location: 0, length: exp.utf16.count)) {
+                guard let range1 = Range(match.range(at: 1), in: exp),
+                      let range2 = Range(match.range(at: 2), in: exp),
+                      let rangeAll = Range(match.range(at: 0), in: exp) else { break }
+                let a = String(exp[range1])
+                let b = String(exp[range2])
+                let powStr = "pow(\(a),\(b))"
+                exp.replaceSubrange(rangeAll, with: powStr)
+            }
+            return exp
+        }
+
+        // Helper to evaluate mod: a%b => a.truncatingRemainder(dividingBy:b)
+        func replaceMod(_ s: String) -> String {
+            var exp = s
+            // Regex for numbers or parens: ([0-9.]+|\([^()]*\))%([0-9.]+|\([^()]*\))
+            let pattern = #"((?:[0-9.]+|\([^()]*\)))%((?:[0-9.]+|\([^()]*\)))"#
+            let regex = try? NSRegularExpression(pattern: pattern)
+            while let match = regex?.firstMatch(in: exp, options: [], range: NSRange(location: 0, length: exp.utf16.count)) {
+                guard let range1 = Range(match.range(at: 1), in: exp),
+                      let range2 = Range(match.range(at: 2), in: exp),
+                      let rangeAll = Range(match.range(at: 0), in: exp) else { break }
+                let a = String(exp[range1])
+                let b = String(exp[range2])
+                let modStr = "(\(a)).truncatingRemainder(dividingBy:\(b))"
+                exp.replaceSubrange(rangeAll, with: modStr)
+            }
+            return exp
+        }
+
+        // Replace ^ and % operators
+        expr = replacePower(expr)
+        expr = replaceMod(expr)
+
+        // Now try to evaluate via NSExpression
+        let nsExp = NSExpression(format: expr)
+        if let value = nsExp.expressionValue(with: nil, context: nil) as? NSNumber {
+            convert(value: value.doubleValue)
         } else {
-            result = "null Xp"
+            result = "Error"
+            alertMessage = "Invalid calculation"
+            showSuccessToast = false
+            showToast = true
         }
     }
     
     private func convert(value: Double) {
         guard let f = selectedCategory.unitMap[fromUnit], let t = selectedCategory.unitMap[toUnit] else {
             result = "null Xp"
+            alertMessage = "Conversion failed"
+            showSuccessToast = false
+            showToast = true
             return
         }
         let baseValue = value * f
@@ -306,5 +477,16 @@ extension String {
 struct CalculatorView_Previews: PreviewProvider {
     static var previews: some View {
         CalculatorView()
+    }
+}
+
+// NeonGlow modifier for soft colored glow effect
+struct NeonGlow: ViewModifier {
+    let color: Color
+    func body(content: Content) -> some View {
+        content
+            .shadow(color: color.opacity(0.7), radius: 1, x: 0, y: 0)
+            .shadow(color: color.opacity(0.4), radius: 2, x: 0, y: 0)
+            .shadow(color: color.opacity(0.25), radius: 3, x: 0, y: 0)
     }
 }
