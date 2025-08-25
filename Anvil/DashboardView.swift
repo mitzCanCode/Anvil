@@ -8,8 +8,21 @@
 import SwiftUI
 
 struct DashboardView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Hello, World!")
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.blue.opacity(colorScheme == .dark ? 0.1 : 0.3), 
+                        Color.purple.opacity(colorScheme == .dark ? 0.1 : 0.3)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+            )
     }
 }
 

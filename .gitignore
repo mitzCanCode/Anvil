@@ -164,3 +164,58 @@ AuthKey_*.p8
 
 # Crash logs
 *.crash
+
+# SENSITIVE FILES - API Keys & Configuration
+# Google Services & Firebase
+GoogleService-Info.plist
+GoogleService-Info-*.plist
+google-services.json
+firebase_app_id_file.json
+
+# API Keys and Secrets
+APIKeys.plist
+Secrets.plist
+Config.plist
+*-secrets.plist
+*.apikey
+*.secret
+*.token
+
+# Environment files with potential secrets
+.env
+.env.local
+.env.production
+.env.staging
+.env.*
+
+# Certificates and signing
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
+*.certSigningRequest
+
+# Private keys
+*.pem
+*.key
+*_rsa
+*_rsa.pub
+
+# Keystore files
+*.keystore
+*.jks
+
+# Configuration files that might contain sensitive data
+credentials.json
+settings.json
+config.json
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files that might contain sensitive data
+*.backup
+*.bak
+*.orig

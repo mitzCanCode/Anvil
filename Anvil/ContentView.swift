@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -16,6 +18,17 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
+        .background(
+            LinearGradient(
+                colors: [
+                    Color.blue.opacity(colorScheme == .dark ? 0.1 : 0.3), 
+                    Color.purple.opacity(colorScheme == .dark ? 0.1 : 0.3)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+        )
     }
 }
 

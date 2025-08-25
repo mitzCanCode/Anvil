@@ -47,7 +47,7 @@ struct CalculatorView: View {
     @State private var showSuccessToast: Bool = false
     @State private var alertMessage: String = ""
     
-
+    
     let categories: [ConversionCategory] = [
         ConversionCategory(
             name: "Data & Storage",
@@ -88,7 +88,7 @@ struct CalculatorView: View {
             ]
         )
     ]
-
+    
     var selectedCategory: ConversionCategory {
         categories[selectedCategoryIndex]
     }
@@ -99,7 +99,7 @@ struct CalculatorView: View {
         ["1", "2", "3", "×", "^"],
         ["CalcType", "0", ".", "−", "+"]
     ]
-
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -116,79 +116,79 @@ struct CalculatorView: View {
                         } else {
                             result = "0"
                         }
-//                        Keeping this in case i change my mind although i think its a bit much
-//                        alertMessage = "Value switched!"
-//                        showSuccessToast = true
-//                        showToast = true
+                        //                        Keeping this in case i change my mind although i think its a bit much
+                        //                        alertMessage = "Value switched!"
+                        //                        showSuccessToast = true
+                        //                        showToast = true
                     }) {
                         Image(systemName: "arrow.up.arrow.down")
                             .font(.title2)
                             .foregroundColor(palette.accent)
                     }
                     
-                VStack(alignment: .trailing, spacing: 10) {
-                    HStack(alignment: .bottom) {
-                        Spacer()
-                        Button(action: {
-                            UIPasteboard.general.string = inputValue.isEmpty ? "0" : inputValue
-                            alertMessage = "Copied to clipboard!"
-                            showSuccessToast = true
-                            showToast = true
-                        }) {
-                            Text(inputValue.isEmpty ? "0" : inputValue)
-                                .font(.system(size: 50, weight: .bold, design: .monospaced))
-                                .lineLimit(1)
-                                .bold()
-                                .monospaced()
-                                .foregroundColor(palette.text)
-                        }
-                        Picker("From", selection: $fromUnit) {
-                            ForEach(selectedCategory.units, id: \.self) { unit in
-                                Text(unit)
-                                    .tag(unit)
-                            }
-                        }
-                        .pickerStyle(MenuPickerStyle())
-                    }
-                    
-                    
-                    Divider()
-                        .padding(.leading)
-
-                    HStack(alignment: .bottom) {
-                        Button(action: {
-                            UIPasteboard.general.string = result
-                            alertMessage = "Copied to clipboard!"
-                            showSuccessToast = true
-                            showToast = true
-                        }) {
-                            Text(result)
-                                .font(.system(size: 50, weight: .bold, design: .monospaced))
-                                .lineLimit(1)
-                                .bold()
-                                .monospaced()
-                                .foregroundColor(palette.text)
-                        }
-                        Picker("To", selection: $toUnit) {
-                            ForEach(selectedCategory.units, id: \.self) { unit in
-                                Text(unit)
+                    VStack(alignment: .trailing, spacing: 10) {
+                        HStack(alignment: .bottom) {
+                            Spacer()
+                            Button(action: {
+                                UIPasteboard.general.string = inputValue.isEmpty ? "0" : inputValue
+                                alertMessage = "Copied to clipboard!"
+                                showSuccessToast = true
+                                showToast = true
+                            }) {
+                                Text(inputValue.isEmpty ? "0" : inputValue)
+                                    .font(.system(size: 50, weight: .bold, design: .monospaced))
+                                    .lineLimit(1)
+                                    .bold()
                                     .monospaced()
-                                    .tag(unit)
+                                    .foregroundColor(palette.text)
                             }
+                            Picker("From", selection: $fromUnit) {
+                                ForEach(selectedCategory.units, id: \.self) { unit in
+                                    Text(unit)
+                                        .tag(unit)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
                         }
-                        .pickerStyle(MenuPickerStyle())
+                        
+                        
+                        Divider()
+                            .padding(.leading)
+                        
+                        HStack(alignment: .bottom) {
+                            Button(action: {
+                                UIPasteboard.general.string = result
+                                alertMessage = "Copied to clipboard!"
+                                showSuccessToast = true
+                                showToast = true
+                            }) {
+                                Text(result)
+                                    .font(.system(size: 50, weight: .bold, design: .monospaced))
+                                    .lineLimit(1)
+                                    .bold()
+                                    .monospaced()
+                                    .foregroundColor(palette.text)
+                            }
+                            Picker("To", selection: $toUnit) {
+                                ForEach(selectedCategory.units, id: \.self) { unit in
+                                    Text(unit)
+                                        .monospaced()
+                                        .tag(unit)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                        }
                     }
-                }
                     
-            }
-            .padding(.horizontal)
-            .padding(.bottom)
-
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+                
                 Spacer()
                 
-                VStack(spacing: 10) {
+                VStack(spacing: 12) {
                     ForEach(buttons, id: \.self) { row in
-                        HStack(spacing: 10) {
+                        HStack(spacing: 12) {
                             ForEach(row, id: \.self) { button in
                                 if button == "CalcType" {
                                     Menu {
@@ -211,45 +211,45 @@ struct CalculatorView: View {
                                             }
                                         }
                                     } label: {
-                                        VStack{
-                                            Spacer()
-                                            Image(systemName: "slider.vertical.3")
-                                            Spacer()
-                                        }
-                                            .font(.largeTitle)
-                                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
-                                            .foregroundColor(palette.text)
-                                            .background(.ultraThinMaterial)
-                                            .cornerRadius(15)
-                                            .modifier(NeonGlow(color: self.buttonColor(button)))
+                                        Image(systemName: "slider.vertical.3")
+                                            .font(.title2)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity, minHeight: 60)
+                                            .background(self.buttonColor(button))
+                                            .clipShape(Circle())
+                                            .aspectRatio(1, contentMode: .fit)
+                                            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                            .shadow(color: self.buttonColor(button).opacity(0.3), radius: 8, x: 0, y: 4)
                                     }
                                 } else {
                                     Button(action: {
                                         Haptics.shared.light()
                                         self.buttonTapped(button)
                                     }) {
-                                        VStack{
-                                            Spacer()
-                                            Text(button)
-                                                .font(.largeTitle)
-                                                .monospaced()
-                                                .foregroundColor(palette.text)
-                                            Spacer()
-
-                                        }
-                                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
-                                            .background(.ultraThinMaterial)
-                                            .cornerRadius(15)
-                                            .modifier(NeonGlow(color: self.buttonColor(button)))
+                                        Text(button)
+                                            .font(.title2)
+                                            .fontWeight(.semibold)
+                                            .monospaced()
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity, minHeight: 60)
+                                            .background(self.buttonColor(button))
+                                            .clipShape(Circle())
+                                            .aspectRatio(1, contentMode: .fit)
+                                            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                            .shadow(color: self.buttonColor(button).opacity(0.3), radius: 8, x: 0, y: 4)
                                     }
                                 }
                             }
                         }
                     }
                 }
-//                .padding(.horizontal)
-                .padding()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                
+                
             }
+            
             .toast(isPresenting: $showToast) {
                 AlertToast(
                     displayMode: .banner(.pop),
@@ -257,7 +257,16 @@ struct CalculatorView: View {
                     title: alertMessage
                 )
             }
-            .background(palette.base)
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.blue.opacity(colorScheme == .dark ? 0.1 : 0.3), 
+                        Color.purple.opacity(colorScheme == .dark ? 0.1 : 0.3)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
             .accentColor(palette.accent)
             .navigationTitle("Calculator")
         }
@@ -265,17 +274,17 @@ struct CalculatorView: View {
     
     private func buttonColor(_ button: String) -> Color {
         if button == "C" {
-            return palette.red
+            return palette.red.opacity(0.8)
         } else if ["+", "−", "×", "÷", "^", "%"].contains(button) {
-            return palette.peach
+            return palette.peach.opacity(0.8)
         } else if button == "⌫" {
-            return palette.red
+            return palette.red.opacity(0.8)
         } else if button == "CalcType" {
-            return palette.overlay1
+            return palette.overlay1.opacity(0.9)
         } else if button == "switch" {
-            return palette.accent
+            return palette.accent.opacity(0.8)
         } else {
-            return palette.blue
+            return palette.blue.opacity(0.8)
         }
     }
     
@@ -341,7 +350,7 @@ struct CalculatorView: View {
             .replacingOccurrences(of: "×", with: "*")
             .replacingOccurrences(of: "÷", with: "/")
             .replacingOccurrences(of: "−", with: "-")
-
+        
         // Do not evaluate if expression ends with operator
         let operatorSet = CharacterSet(charactersIn: "+-*/^%")
         if let last = expr.last, String(last).rangeOfCharacter(from: operatorSet) != nil {
@@ -351,7 +360,7 @@ struct CalculatorView: View {
             showToast = true
             return
         }
-
+        
         // Helper to evaluate power: a^b => pow(a, b)
         func replacePower(_ s: String) -> String {
             var exp = s
@@ -369,7 +378,7 @@ struct CalculatorView: View {
             }
             return exp
         }
-
+        
         // Helper to evaluate mod: a%b => a.truncatingRemainder(dividingBy:b)
         func replaceMod(_ s: String) -> String {
             var exp = s
@@ -387,11 +396,11 @@ struct CalculatorView: View {
             }
             return exp
         }
-
+        
         // Replace ^ and % operators
         expr = replacePower(expr)
         expr = replaceMod(expr)
-
+        
         // Now try to evaluate via NSExpression
         let nsExp = NSExpression(format: expr)
         if let value = nsExp.expressionValue(with: nil, context: nil) as? NSNumber {

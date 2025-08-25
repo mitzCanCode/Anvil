@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		CD0C2F422E5B92E800AB8751 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = CD0C2F412E5B92E800AB8751 /* AlertToast */; };
+		CD5697BB2E5CB6F000000232 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CD5697BA2E5CB6F000000232 /* FirebaseAuth */; };
+		CD5697BD2E5CB6F000000232 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = CD5697BC2E5CB6F000000232 /* FirebaseCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,9 +35,22 @@
 		CDAA64052E5A75D600583587 /* AnvilUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnvilUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CD5697CA2E5CCD1900000232 /* Exceptions for "Anvil" folder in "Anvil" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CDAA63ED2E5A75D400583587 /* Anvil */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CDAA63F02E5A75D400583587 /* Anvil */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CD5697CA2E5CCD1900000232 /* Exceptions for "Anvil" folder in "Anvil" target */,
+			);
 			path = Anvil;
 			sourceTree = "<group>";
 		};
@@ -57,6 +72,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0C2F422E5B92E800AB8751 /* AlertToast in Frameworks */,
+				CD5697BD2E5CB6F000000232 /* FirebaseCore in Frameworks */,
+				CD5697BB2E5CB6F000000232 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +135,8 @@
 			name = Anvil;
 			packageProductDependencies = (
 				CD0C2F412E5B92E800AB8751 /* AlertToast */,
+				CD5697BA2E5CB6F000000232 /* FirebaseAuth */,
+				CD5697BC2E5CB6F000000232 /* FirebaseCore */,
 			);
 			productName = Anvil;
 			productReference = CDAA63EE2E5A75D400583587 /* Anvil.app */;
@@ -203,6 +222,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CD0C2F402E5B92E800AB8751 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				CD5697B92E5CB6F000000232 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CDAA63EF2E5A75D400583587 /* Products */;
@@ -409,6 +429,7 @@
 				DEVELOPMENT_TEAM = CA56QS4D46;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Anvil/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -437,6 +458,7 @@
 				DEVELOPMENT_TEAM = CA56QS4D46;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Anvil/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -577,6 +599,14 @@
 				minimumVersion = 1.3.9;
 			};
 		};
+		CD5697B92E5CB6F000000232 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -584,6 +614,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CD0C2F402E5B92E800AB8751 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
+		};
+		CD5697BA2E5CB6F000000232 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD5697B92E5CB6F000000232 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		CD5697BC2E5CB6F000000232 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD5697B92E5CB6F000000232 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
