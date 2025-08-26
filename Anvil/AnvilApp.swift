@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import Firebase
 import FirebaseAuth
 import AuthenticationServices
@@ -23,16 +24,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
+
 @main
 struct AnvilApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var authVM = AuthViewModel()
-
+    
     var body: some Scene {
         WindowGroup {
             if let user = authVM.user {
-                TabView{
-                    
+                TabView {
                     DashboardView()
                         .tabItem {
                             Label("Home", systemImage: "house")
@@ -47,11 +48,14 @@ struct AnvilApp: App {
                         .tabItem {
                             Label("More", systemImage: "ellipsis.circle")
                         }
+                        
                 }
+                .tint(Color(.systemPurple))
                 
             } else {
                 SignInView(authViewModel: authVM)
             }
         }
+        .environmentObject(authVM) // Make AuthViewModel available throughout the app
     }
 }

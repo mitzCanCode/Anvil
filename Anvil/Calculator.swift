@@ -1,3 +1,10 @@
+//
+//  SimpleCalculator.swift
+//  Anvil
+//
+//  Clean, simple calculator implementation
+//
+
 import SwiftUI
 import UIKit
 import AlertToast
@@ -12,40 +19,21 @@ struct ConversionCategory: Identifiable {
 
 struct CalculatorView: View {
     @Environment(\.colorScheme) var colorScheme
-    private var palette: (base: Color, text: Color, red: Color, peach: Color, green: Color, blue: Color, overlay1: Color, accent: Color) {
-        if colorScheme == .dark {
-            return (
-                CatppuccinFrappe.base,
-                CatppuccinFrappe.text,
-                CatppuccinFrappe.red,
-                CatppuccinFrappe.peach,
-                CatppuccinFrappe.green,
-                CatppuccinFrappe.blue,
-                CatppuccinFrappe.overlay1,
-                CatppuccinFrappe.mauve // accent
-            )
-        } else {
-            return (
-                CatppuccinLatte.base,
-                CatppuccinLatte.text,
-                CatppuccinLatte.red,
-                CatppuccinLatte.peach,
-                CatppuccinLatte.green,
-                CatppuccinLatte.blue,
-                CatppuccinLatte.overlay1,
-                CatppuccinLatte.blue // accent
-            )
-        }
-    }
-    @State private var inputValue: String = ""
+    
+    // Simple state
+    @State private var display: String = "0"
     @State private var fromUnit: String = "MB"
     @State private var toUnit: String = "GB"
-    @State private var result: String = "0"
+    @State private var convertedResult: String = "0"
     @State private var selectedCategoryIndex: Int = 0
     
     @State private var showToast: Bool = false
     @State private var showSuccessToast: Bool = false
     @State private var alertMessage: String = ""
+    
+    // Error handling constants
+    private let maxDisplayLength = 20
+    private let maxNumberValue = 1e15
     
     
     let categories: [ConversionCategory] = [
@@ -93,6 +81,11 @@ struct CalculatorView: View {
         categories[selectedCategoryIndex]
     }
     
+    var shouldShowEvaluateButton: Bool {
+        return display.contains("+") || display.contains("−") || display.contains("×") ||
+               display.contains("÷") || display.contains("^") || display.contains("%")
+    }
+    
     let buttons: [[String]] = [
         ["7", "8", "9", "C", "⌫"],
         ["4", "5", "6", "÷", "%"],
@@ -103,142 +96,148 @@ struct CalculatorView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                HStack{
-                    // Switch button between From and To
-                    Button(action: {
-                        Haptics.shared.light()
-                        let temp = fromUnit
-                        fromUnit = toUnit
-                        toUnit = temp
-                        // Only evaluate if inputValue is a valid number/expression
-                        if !inputValue.isEmpty && !"+−×÷^%".contains(inputValue.last!) {
-                            evaluateExpression()
-                        } else {
-                            result = "0"
-                        }
-                        //                        Keeping this in case i change my mind although i think its a bit much
-                        //                        alertMessage = "Value switched!"
-                        //                        showSuccessToast = true
-                        //                        showToast = true
-                    }) {
+                HStack {
+                    // Switch button
+                    Button(action: swapUnits) {
                         Image(systemName: "arrow.up.arrow.down")
                             .font(.title2)
-                            .foregroundColor(palette.accent)
+                            .foregroundColor(.accentColor)
                     }
                     
                     VStack(alignment: .trailing, spacing: 10) {
+                        // Input display
                         HStack(alignment: .bottom) {
                             Spacer()
-                            Button(action: {
-                                UIPasteboard.general.string = inputValue.isEmpty ? "0" : inputValue
-                                alertMessage = "Copied to clipboard!"
-                                showSuccessToast = true
-                                showToast = true
-                            }) {
-                                Text(inputValue.isEmpty ? "0" : inputValue)
-                                    .font(.system(size: 50, weight: .bold, design: .monospaced))
-                                    .lineLimit(1)
-                                    .bold()
-                                    .monospaced()
-                                    .foregroundColor(palette.text)
+                            Button(action: copyInput) {
+                                ScrollViewReader { scrollProxy in
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        Text(display)
+                                            .font(.system(size: 50, weight: .bold, design: .monospaced))
+                                            .lineLimit(1)
+                                            .foregroundColor(.primary)
+                                            .padding(.horizontal, 4)
+                                            .frame(maxWidth: .infinity, alignment: .trailing)
+                                            .id("display")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .onChange(of: display) { _ in
+                                        withAnimation(.easeOut(duration: 0.1)) {
+                                            scrollProxy.scrollTo("display", anchor: .trailing)
+                                        }
+                                    }
+                                }
                             }
+                            
                             Picker("From", selection: $fromUnit) {
                                 ForEach(selectedCategory.units, id: \.self) { unit in
-                                    Text(unit)
-                                        .tag(unit)
+                                    Text(unit).tag(unit)
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
+            .onChange(of: fromUnit) { _ in 
+                if display == "Err0r" || convertedResult == "Err0r" {
+                    display = "0"
+                    convertedResult = "0"
+                }
+                safeUpdateConversion()
+            }
                         }
                         
+                        Divider().padding(.leading)
                         
-                        Divider()
-                            .padding(.leading)
-                        
+                        // Result display
                         HStack(alignment: .bottom) {
-                            Button(action: {
-                                UIPasteboard.general.string = result
-                                alertMessage = "Copied to clipboard!"
-                                showSuccessToast = true
-                                showToast = true
-                            }) {
-                                Text(result)
-                                    .font(.system(size: 50, weight: .bold, design: .monospaced))
-                                    .lineLimit(1)
-                                    .bold()
-                                    .monospaced()
-                                    .foregroundColor(palette.text)
+                            Spacer()
+                            Button(action: copyResult) {
+                                ScrollViewReader { scrollProxy in
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        Text(convertedResult)
+                                            .font(.system(size: 50, weight: .bold, design: .monospaced))
+                                            .lineLimit(1)
+                                            .foregroundColor(.primary)
+                                            .padding(.horizontal, 4)
+                                            .frame(maxWidth: .infinity, alignment: .trailing)
+                                            .id("result")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .onChange(of: convertedResult) { _ in
+                                        withAnimation(.easeOut(duration: 0.1)) {
+                                            scrollProxy.scrollTo("result", anchor: .trailing)
+                                        }
+                                    }
+                                }
                             }
+                            
                             Picker("To", selection: $toUnit) {
                                 ForEach(selectedCategory.units, id: \.self) { unit in
-                                    Text(unit)
-                                        .monospaced()
-                                        .tag(unit)
+                                    Text(unit).tag(unit)
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
+                            .onChange(of: toUnit) { _ in 
+                                if display == "Err0r" || convertedResult == "Err0r" {
+                                    display = "0"
+                                    convertedResult = "0"
+                                }
+                                safeUpdateConversion()
+                            }
                         }
                     }
-                    
                 }
+                .padding()
+                .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
+                .background(
+                    Color.purple.opacity(colorScheme == .dark ? 0.3 : 0.2),
+                    in: RoundedRectangle(cornerRadius: 20)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(
+                            Color.purple.opacity(colorScheme == .dark ? 0.3 : 0.2),
+                            lineWidth: 4
+                        )
+                )
+                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
                 .padding(.horizontal)
-                .padding(.bottom)
                 
                 Spacer()
                 
-                VStack(spacing: 12) {
+                // Evaluate button
+                if shouldShowEvaluateButton {
+                    Button(action: evaluateExpression) {
+                        HStack {
+                            Image(systemName: "equal.circle.fill")
+                                .font(.title2)
+                            Text("Evaluate")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, minHeight: 60)
+                        .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
+                        .background(Color.green.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.green.opacity(0.3), lineWidth: 5)
+                        )
+                        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
+                    .transition(.asymmetric(insertion: .move(edge: .top).combined(with: .opacity),
+                                          removal: .move(edge: .top).combined(with: .opacity)))
+                    .animation(.easeInOut(duration: 0.3), value: shouldShowEvaluateButton)
+                }
+                
+                // Calculator buttons
+                VStack(spacing: 8) {
                     ForEach(buttons, id: \.self) { row in
-                        HStack(spacing: 12) {
+                        HStack(spacing: 8) {
                             ForEach(row, id: \.self) { button in
                                 if button == "CalcType" {
-                                    Menu {
-                                        ForEach(categories.indices, id: \.self) { index in
-                                            Button(action: {
-                                                Haptics.shared.light()
-                                                selectedCategoryIndex = index
-                                                fromUnit = categories[index].units.first ?? ""
-                                                toUnit = categories[index].units.last ?? ""
-                                                result = "0"
-                                                inputValue = ""
-                                            }) {
-                                                HStack {
-                                                    if index == selectedCategoryIndex {
-                                                        Image(systemName: "checkmark")
-                                                    }
-                                                    Text(categories[index].name)
-                                                        .monospaced()
-                                                }
-                                            }
-                                        }
-                                    } label: {
-                                        Image(systemName: "slider.vertical.3")
-                                            .font(.title2)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.white)
-                                            .frame(maxWidth: .infinity, minHeight: 60)
-                                            .background(self.buttonColor(button))
-                                            .clipShape(Circle())
-                                            .aspectRatio(1, contentMode: .fit)
-                                            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-                                            .shadow(color: self.buttonColor(button).opacity(0.3), radius: 8, x: 0, y: 4)
-                                    }
+                                    categoryMenu
                                 } else {
-                                    Button(action: {
-                                        Haptics.shared.light()
-                                        self.buttonTapped(button)
-                                    }) {
-                                        Text(button)
-                                            .font(.title2)
-                                            .fontWeight(.semibold)
-                                            .monospaced()
-                                            .foregroundColor(.white)
-                                            .frame(maxWidth: .infinity, minHeight: 60)
-                                            .background(self.buttonColor(button))
-                                            .clipShape(Circle())
-                                            .aspectRatio(1, contentMode: .fit)
-                                            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-                                            .shadow(color: self.buttonColor(button).opacity(0.3), radius: 8, x: 0, y: 4)
-                                    }
+                                    calculatorButton(button)
                                 }
                             }
                         }
@@ -246,256 +245,453 @@ struct CalculatorView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
-                
-                
             }
-            
             .toast(isPresenting: $showToast) {
                 AlertToast(
                     displayMode: .banner(.pop),
-                    type: showSuccessToast ? .complete(palette.green) : .error(palette.red ),
+                    type: showSuccessToast ? .complete(.green) : .error(.red),
                     title: alertMessage
                 )
             }
             .background(
                 LinearGradient(
                     colors: [
-                        Color.blue.opacity(colorScheme == .dark ? 0.1 : 0.3), 
+                        Color.blue.opacity(colorScheme == .dark ? 0.1 : 0.3),
                         Color.purple.opacity(colorScheme == .dark ? 0.1 : 0.3)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
             )
-            .accentColor(palette.accent)
             .navigationTitle("Calculator")
         }
     }
     
-    private func buttonColor(_ button: String) -> Color {
-        if button == "C" {
-            return palette.red.opacity(0.8)
-        } else if ["+", "−", "×", "÷", "^", "%"].contains(button) {
-            return palette.peach.opacity(0.8)
-        } else if button == "⌫" {
-            return palette.red.opacity(0.8)
-        } else if button == "CalcType" {
-            return palette.overlay1.opacity(0.9)
-        } else if button == "switch" {
-            return palette.accent.opacity(0.8)
-        } else {
-            return palette.blue.opacity(0.8)
+    // MARK: - UI Components
+    
+    var categoryMenu: some View {
+        Menu {
+            ForEach(categories.indices, id: \.self) { index in
+                Button(action: { selectCategory(index) }) {
+                    HStack {
+                        if index == selectedCategoryIndex {
+                            Image(systemName: "checkmark")
+                        }
+                        Text(categories[index].name)
+                    }
+                }
+            }
+        } label: {
+            Button(action: {
+                Haptics.shared.light()
+            }) {
+                Image(systemName: "slider.vertical.3")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, minHeight: 60)
+                    .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
+                    .background(Color.purple.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.purple.opacity(0.3), lineWidth: 5))
+                    .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
+            }
+
         }
     }
     
-    private func buttonTapped(_ button: String) {
+    func calculatorButton(_ button: String) -> some View {
+        Button(action: { buttonTapped(button) }) {
+            Text(button)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .monospaced()
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, minHeight: 60)
+                .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
+                .background(buttonColor(button), in: RoundedRectangle(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(buttonColor(button).opacity(0.3), lineWidth: 5)
+                )
+                .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
+        }
+    }
+    
+    // MARK: - Logic Functions
+    
+    func buttonColor(_ button: String) -> Color {
+        if ["+", "−", "×", "÷", "^", "%", "C", "⌫"].contains(button) {
+            return Color.purple.opacity(0.8)
+        } else {
+            return Color.blue.opacity(0.8)
+        }
+    }
+    
+    func buttonTapped(_ button: String) {
+        Haptics.shared.light()
+        
         switch button {
         case "C":
-            inputValue = "0"
-            result = "0"
+            display = "0"
+            convertedResult = "0"
+            
         case "⌫":
-            if !inputValue.isEmpty {
-                inputValue.removeLast()
-                if inputValue.isEmpty {
-                    inputValue = "0"
-                    result = "0"
-                } else if !inputValue.isEmpty && "+−×÷^%".contains(inputValue.last!) {
-                    // Do not evaluate if expression ends with operator
-                    result = "null Xp"
-                    alertMessage = "Invalid expression"
-                    showSuccessToast = false
-                    showToast = true
+            if display == "Err0r" {
+                display = "0"
+                convertedResult = "0"
+            } else if display.count > 1 {
+                display.removeLast()
+                safeUpdateConversion()
+            } else {
+                display = "0"
+                convertedResult = "0"
+            }
+            
+        case "+", "−", "×", "÷", "^", "%":
+            if display != "0" && display != "Err0r" {
+                let newDisplay: String
+                // Remove last character if it's an operator
+                if ["+", "−", "×", "÷", "^", "%"].contains(String(display.last ?? " ")) {
+                    newDisplay = String(display.dropLast()) + button
                 } else {
-                    evaluateExpression()
+                    newDisplay = display + button
+                }
+                
+                if newDisplay.count <= maxDisplayLength {
+                    display = newDisplay
+                } else {
+                    showErrorMessage("Input too long")
+                }
+            }
+            
+        case ".":
+            // If in error state, start fresh with "0."
+            if display == "Err0r" {
+                display = "0."
+                if convertedResult == "Err0r" {
+                    convertedResult = "0"
+                }
+                safeUpdateConversion()
+            } else {
+                // Add decimal if not already present in current number
+                let lastNumberComponents = display.components(separatedBy: CharacterSet(charactersIn: "+−×÷^%"))
+                if let lastNumber = lastNumberComponents.last, !lastNumber.contains(".") {
+                    let newDisplay = display + button
+                    if newDisplay.count <= maxDisplayLength {
+                        display = newDisplay
+                        safeUpdateConversion()
+                    } else {
+                        showErrorMessage("Input too long")
+                    }
+                }
+            }
+            
+        default: // Numbers
+            let newDisplay = (display == "0" || display == "Err0r") ? button : display + button
+            if newDisplay.count <= maxDisplayLength {
+                // Check if the number would be too large
+                let components = newDisplay.components(separatedBy: CharacterSet(charactersIn: "+−×÷^%"))
+                var isValid = true
+                
+                for component in components {
+                    if let value = Double(component), abs(value) > maxNumberValue {
+                        isValid = false
+                        break
+                    }
+                }
+                
+                if isValid {
+                    display = newDisplay
+                    // Clear any previous error state in result when starting fresh input
+                    if convertedResult == "Err0r" {
+                        convertedResult = "0"
+                    }
+                    safeUpdateConversion()
+                } else {
+                    showErrorMessage("Number too large")
                 }
             } else {
-                inputValue = "0"
-                result = "0"
+                showErrorMessage("Input too long")
             }
-        case "+", "−", "×", "÷", "^", "%":
-            if let last = inputValue.last, "+−×÷^%".contains(last) {
-                inputValue.removeLast()
-            }
-            if !inputValue.isEmpty && inputValue != "0" {
-                inputValue.append(button)
-            }
-        case ".":
-            if canAddDecimal() {
-                inputValue.append(button)
-            }
-        default:
-            if inputValue == "0" {
-                inputValue = ""
-            }
-            inputValue.append(button)
-            evaluateExpression()
         }
     }
     
-    private func canAddDecimal() -> Bool {
-        // Prevent multiple decimals in a number segment
-        var lastNumber = ""
-        for char in inputValue.reversed() {
-            if "+−×÷^%".contains(char) {
-                break
+    func evaluateExpression() {
+        Haptics.shared.light()
+        
+        do {
+            // Clean the expression: remove commas and format for evaluation
+            let cleanExpr = display
+                .replacingOccurrences(of: ",", with: "") // Remove commas from formatted numbers
+                .replacingOccurrences(of: "×", with: "*")
+                .replacingOccurrences(of: "÷", with: "/")
+                .replacingOccurrences(of: "−", with: "-")
+            
+            // Validate expression ends properly
+            guard !cleanExpr.isEmpty,
+                  !["*", "/", "+", "-", "^", "%"].contains(String(cleanExpr.last ?? " ")) else {
+                display = "Err0r"
+                convertedResult = "Err0r"
+                showErrorMessage("Invalid expression")
+                return
             }
-            lastNumber = String(char) + lastNumber
-        }
-        return !lastNumber.contains(".")
-    }
-    
-    private func evaluateExpression() {
-        // Preprocess inputValue:
-        var expr = inputValue
-            .replacingOccurrences(of: "×", with: "*")
-            .replacingOccurrences(of: "÷", with: "/")
-            .replacingOccurrences(of: "−", with: "-")
-        
-        // Do not evaluate if expression ends with operator
-        let operatorSet = CharacterSet(charactersIn: "+-*/^%")
-        if let last = expr.last, String(last).rangeOfCharacter(from: operatorSet) != nil {
-            result = "Error"
-            alertMessage = "Expression cannot end with operator"
-            showSuccessToast = false
-            showToast = true
-            return
-        }
-        
-        // Helper to evaluate power: a^b => pow(a, b)
-        func replacePower(_ s: String) -> String {
-            var exp = s
-            // Regex for numbers or parens: ([0-9.]+|\([^()]*\))\^([0-9.]+|\([^()]*\))
-            let pattern = #"((?:[0-9.]+|\([^()]*\)))\^((?:[0-9.]+|\([^()]*\)))"#
-            let regex = try? NSRegularExpression(pattern: pattern)
-            while let match = regex?.firstMatch(in: exp, options: [], range: NSRange(location: 0, length: exp.utf16.count)) {
-                guard let range1 = Range(match.range(at: 1), in: exp),
-                      let range2 = Range(match.range(at: 2), in: exp),
-                      let rangeAll = Range(match.range(at: 0), in: exp) else { break }
-                let a = String(exp[range1])
-                let b = String(exp[range2])
-                let powStr = "pow(\(a),\(b))"
-                exp.replaceSubrange(rangeAll, with: powStr)
+            
+            // Handle modulus operations first (NSExpression doesn't support %)
+            let modulusProcessed = try replaceModulusOperations(cleanExpr)
+            
+            // Handle simple power operations by replacing ^ with pow function calls
+            let processedExpr = replacePowerOperations(modulusProcessed)
+            
+            // Check for power operation errors
+            if processedExpr == "ERROR_IN_POWER" {
+                display = "Err0r"
+                convertedResult = "Err0r"
+                showErrorMessage("Power operation failed")
+                return
             }
-            return exp
-        }
-        
-        // Helper to evaluate mod: a%b => a.truncatingRemainder(dividingBy:b)
-        func replaceMod(_ s: String) -> String {
-            var exp = s
-            // Regex for numbers or parens: ([0-9.]+|\([^()]*\))%([0-9.]+|\([^()]*\))
-            let pattern = #"((?:[0-9.]+|\([^()]*\)))%((?:[0-9.]+|\([^()]*\)))"#
-            let regex = try? NSRegularExpression(pattern: pattern)
-            while let match = regex?.firstMatch(in: exp, options: [], range: NSRange(location: 0, length: exp.utf16.count)) {
-                guard let range1 = Range(match.range(at: 1), in: exp),
-                      let range2 = Range(match.range(at: 2), in: exp),
-                      let rangeAll = Range(match.range(at: 0), in: exp) else { break }
-                let a = String(exp[range1])
-                let b = String(exp[range2])
-                let modStr = "(\(a)).truncatingRemainder(dividingBy:\(b))"
-                exp.replaceSubrange(rangeAll, with: modStr)
-            }
-            return exp
-        }
-        
-        // Replace ^ and % operators
-        expr = replacePower(expr)
-        expr = replaceMod(expr)
-        
-        // Now try to evaluate via NSExpression
-        let nsExp = NSExpression(format: expr)
-        if let value = nsExp.expressionValue(with: nil, context: nil) as? NSNumber {
-            convert(value: value.doubleValue)
-        } else {
-            result = "Error"
-            alertMessage = "Invalid calculation"
-            showSuccessToast = false
-            showToast = true
-        }
-    }
-    
-    private func convert(value: Double) {
-        guard let f = selectedCategory.unitMap[fromUnit], let t = selectedCategory.unitMap[toUnit] else {
-            result = "null Xp"
-            alertMessage = "Conversion failed"
-            showSuccessToast = false
-            showToast = true
-            return
-        }
-        let baseValue = value * f
-        let converted = baseValue / t
-        result = String(baseValue: converted)
-    }
-    
-    private func evaluateMathExpression(_ expression: String) -> Double? {
-        // Custom parser to handle +, -, *, /, ^ (power), and % (mod)
-        // We'll replace '**' with pow and 'mod' with custom function
-        
-        var exp = expression
-        
-        // Evaluate power operator '**' first by replacing with pow function calls
-        while let range = exp.range(of: #"([0-9.]+)\*\*([0-9.]+)"#, options: .regularExpression) {
-            let match = String(exp[range])
-            let parts = match.components(separatedBy: "**")
-            if parts.count == 2,
-               let base = Double(parts[0]),
-               let exponent = Double(parts[1]) {
-                let powValue = pow(base, exponent)
-                exp.replaceSubrange(range, with: String(powValue))
+            
+            // Try to evaluate
+            let expression = NSExpression(format: processedExpr)
+            if let result = expression.expressionValue(with: nil, context: nil) as? NSNumber {
+                let value = result.doubleValue
+                
+                // Check for invalid results
+                guard value.isFinite, !value.isNaN, abs(value) <= maxNumberValue else {
+                    display = "Err0r"
+                    convertedResult = "Err0r"
+                    showErrorMessage("Result too large or invalid")
+                    return
+                }
+                
+                display = formatNumberForDisplay(value)
+                safeUpdateConversion()
+                showSuccessMessage("Expression evaluated!")
             } else {
-                break
+                display = "Err0r"
+                convertedResult = "Err0r"
+                showErrorMessage("Cannot evaluate expression")
             }
+        } catch {
+            display = "Err0r"
+            convertedResult = "Err0r"
+            showErrorMessage("Calculation error: \(error.localizedDescription)")
         }
+    }
+    
+    func replaceModulusOperations(_ expr: String) throws -> String {
+        var result = expr
         
-        // Evaluate mod operator by replacing 'a mod b' with (a - b * floor(a / b))
-        while let range = exp.range(of: #"([0-9.]+) mod ([0-9.]+)"#, options: .regularExpression) {
-            let match = String(exp[range])
-            let parts = match.components(separatedBy: " mod ")
-            if parts.count == 2,
-               let a = Double(parts[0]),
-               let b = Double(parts[1]),
-               b != 0 {
-                let modValue = a - b * floor(a / b)
-                exp.replaceSubrange(range, with: String(modValue))
+        // Simple regex to find number%number patterns and replace with modulus result
+        let pattern = #"([0-9.]+)%([0-9.]+)"#
+        let regex = try NSRegularExpression(pattern: pattern)
+        
+        while let match = regex.firstMatch(in: result, options: [], range: NSRange(location: 0, length: result.utf16.count)) {
+            guard let range = Range(match.range, in: result) else { break }
+            
+            let matchedString = String(result[range])
+            let components = matchedString.components(separatedBy: "%")
+            
+            if components.count == 2,
+               let dividend = Double(components[0]),
+               let divisor = Double(components[1]) {
+                
+                // Check for division by zero
+                guard divisor != 0 else {
+                    throw NSError(domain: "CalculatorError", code: 3, userInfo: [NSLocalizedDescriptionKey: "Division by zero in modulus"])
+                }
+                
+                // Check for valid numbers
+                guard dividend.isFinite, !dividend.isNaN, divisor.isFinite, !divisor.isNaN else {
+                    throw NSError(domain: "CalculatorError", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid numbers in modulus"])
+                }
+                
+                // Calculate modulus using fmod for floating point numbers
+                let modulusResult = fmod(dividend, divisor)
+                
+                // Check result validity
+                guard modulusResult.isFinite, !modulusResult.isNaN else {
+                    throw NSError(domain: "CalculatorError", code: 5, userInfo: [NSLocalizedDescriptionKey: "Invalid modulus result"])
+                }
+                
+                result.replaceSubrange(range, with: String(modulusResult))
             } else {
-                break
+                break // Avoid infinite loop
             }
         }
         
-        // Now evaluate the remaining expression with NSExpression
-        // Replace any remaining 'mod' just in case (shouldn't be any)
-        exp = exp.replacingOccurrences(of: "mod", with: "-")
+        return result
+    }
+    
+    func replacePowerOperations(_ expr: String) -> String {
+        var result = expr
         
-        let nsExp = NSExpression(format: exp)
-        if let value = nsExp.expressionValue(with: nil, context: nil) as? NSNumber {
-            return value.doubleValue
+        do {
+            // Simple regex to find number^number patterns and replace with pow(number, number)
+            let pattern = #"([0-9.]+)\^([0-9.]+)"#
+            let regex = try NSRegularExpression(pattern: pattern)
+            
+            while let match = regex.firstMatch(in: result, options: [], range: NSRange(location: 0, length: result.utf16.count)) {
+                guard let range = Range(match.range, in: result) else { break }
+                
+                let matchedString = String(result[range])
+                let components = matchedString.components(separatedBy: "^")
+                
+                if components.count == 2,
+                   let base = Double(components[0]),
+                   let exponent = Double(components[1]) {
+                    
+                    // Check for potentially problematic power operations
+                    guard abs(base) <= 1000 && abs(exponent) <= 100 else {
+                        throw NSError(domain: "CalculatorError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Power operation too large"])
+                    }
+                    
+                    let powResult = pow(base, exponent)
+                    
+                    // Check result validity
+                    guard powResult.isFinite, !powResult.isNaN, abs(powResult) <= maxNumberValue else {
+                        throw NSError(domain: "CalculatorError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Power result too large"])
+                    }
+                    
+                    result.replaceSubrange(range, with: String(powResult))
+                } else {
+                    break // Avoid infinite loop
+                }
+            }
+        } catch {
+            // If there's an error in power operations, throw it up
+            return "ERROR_IN_POWER"
         }
-        return nil
+        
+        return result
+    }
+    
+    func safeUpdateConversion() {
+        do {
+            // Get numeric value from display (ignore operators for now, just use first number)
+            let components = display.components(separatedBy: CharacterSet(charactersIn: "+−×÷^%"))
+            guard let firstComponent = components.first,
+                  let value = Double(firstComponent),
+                  let fromFactor = selectedCategory.unitMap[fromUnit],
+                  let toFactor = selectedCategory.unitMap[toUnit] else {
+                convertedResult = "0"
+                return
+            }
+            
+            // Check for valid input values
+            guard value.isFinite, !value.isNaN, abs(value) <= maxNumberValue else {
+                convertedResult = "Err0r"
+                showErrorMessage("Invalid input value")
+                return
+            }
+            
+            let baseValue = value * fromFactor
+            
+            // Check for overflow in base value calculation
+            guard baseValue.isFinite, !baseValue.isNaN, abs(baseValue) <= maxNumberValue * 1000 else {
+                convertedResult = "Err0r"
+                showErrorMessage("Conversion overflow")
+                return
+            }
+            
+            let converted = baseValue / toFactor
+            
+            // Check for valid result
+            guard converted.isFinite, !converted.isNaN else {
+                convertedResult = "Err0r"
+                showErrorMessage("Conversion error")
+                return
+            }
+            
+            convertedResult = formatNumber(converted)
+        } catch {
+            convertedResult = "Err0r"
+            showErrorMessage("Conversion failed: \(error.localizedDescription)")
+        }
+    }
+    
+    func formatNumber(_ value: Double) -> String {
+        do {
+            guard value.isFinite, !value.isNaN else {
+                return "Err0r"
+            }
+            
+            let formatter = NumberFormatter()
+            formatter.minimumFractionDigits = 0
+            formatter.maximumFractionDigits = 10
+            formatter.numberStyle = .decimal
+            return formatter.string(from: NSNumber(value: value)) ?? "Err0r"
+        } catch {
+            return "Err0r"
+        }
+    }
+    
+    func formatNumberForDisplay(_ value: Double) -> String {
+        do {
+            guard value.isFinite, !value.isNaN else {
+                return "Err0r"
+            }
+            
+            // For display, we want simple formatting without commas to avoid parsing issues
+            let formatter = NumberFormatter()
+            formatter.minimumFractionDigits = 0
+            formatter.maximumFractionDigits = 10
+            formatter.numberStyle = .none // No comma separators
+            formatter.usesGroupingSeparator = false
+            return formatter.string(from: NSNumber(value: value)) ?? "Error"
+        } catch {
+            return "Err0r"
+        }
+    }
+    
+    func swapUnits() {
+        Haptics.shared.light()
+        
+        // Clear any error states before swapping
+        if display == "Err0r" || convertedResult == "Err0r" {
+            display = "0"
+            convertedResult = "0"
+        }
+        
+        let temp = fromUnit
+        fromUnit = toUnit
+        toUnit = temp
+        safeUpdateConversion()
+    }
+    
+    func selectCategory(_ index: Int) {
+        Haptics.shared.light()
+        selectedCategoryIndex = index
+        fromUnit = categories[index].units.first ?? ""
+        toUnit = categories[index].units.last ?? ""
+        
+        // Always reset to clean state when switching categories
+        display = "0"
+        convertedResult = "0"
+    }
+    
+    func copyInput() {
+        UIPasteboard.general.string = display
+        showSuccessMessage("Input copied to clipboard!")
+    }
+    
+    func copyResult() {
+        UIPasteboard.general.string = convertedResult
+        showSuccessMessage("Result copied to clipboard!")
+    }
+    
+    func showSuccessMessage(_ message: String) {
+        alertMessage = message
+        showSuccessToast = true
+        showToast = true
+    }
+    
+    func showErrorMessage(_ message: String) {
+        alertMessage = message
+        showSuccessToast = false
+        showToast = true
     }
 }
 
-extension String {
-    init(baseValue value: Double) {
-        let formatter = NumberFormatter()
-        formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = 10
-        formatter.numberStyle = .decimal
-        self = formatter.string(from: NSNumber(value: value)) ?? "null Xp"
-    }
-}
-
-struct CalculatorView_Previews: PreviewProvider {
-    static var previews: some View {
-        CalculatorView()
-    }
-}
-
-// NeonGlow modifier for soft colored glow effect
-struct NeonGlow: ViewModifier {
-    let color: Color
-    func body(content: Content) -> some View {
-        content
-            .shadow(color: color.opacity(0.7), radius: 1, x: 0, y: 0)
-            .shadow(color: color.opacity(0.4), radius: 2, x: 0, y: 0)
-            .shadow(color: color.opacity(0.25), radius: 3, x: 0, y: 0)
-    }
+#Preview {
+    CalculatorView()
 }
