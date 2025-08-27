@@ -42,11 +42,11 @@ struct CalculatorView: View {
             units: ["B", "KB", "MB", "GB", "TB", "PB", "KiB", "MiB", "GiB"],
             unitMap: [
                 "B": 1,
-                "KB": 1_000,
-                "MB": 1_000_000,
-                "GB": 1_000_000_000,
-                "TB": 1_000_000_000_000,
-                "PB": 1_000_000_000_000_000,
+                "KB": 1024,
+                "MB": pow(1024, 2),
+                "GB": pow(1024, 3),
+                "TB": pow(1024, 4),
+                "PB": pow(1024, 5),
                 "KiB": 1024,
                 "MiB": pow(1024, 2),
                 "GiB": pow(1024, 3)
@@ -61,8 +61,8 @@ struct CalculatorView: View {
                 "Mbps": 1_000_000,
                 "Gbps": 1_000_000_000,
                 "B/s": 8,
-                "KB/s": 8_000,
-                "MB/s": 8_000_000
+                "KB/s": 8 * 1024,
+                "MB/s": 8 * pow(1024, 2)
             ]
         ),
         ConversionCategory(

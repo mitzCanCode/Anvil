@@ -50,8 +50,7 @@ struct AnvilApp: App {
                         }
                         
                 }
-                .tint(Color(.systemPurple))
-                
+                .tint(Color(.systemPurple))                
             } else {
                 SignInView(authViewModel: authVM)
             }

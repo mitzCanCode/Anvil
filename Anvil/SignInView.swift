@@ -66,7 +66,7 @@ struct SignInView: View {
                                     .scaleEffect(0.8)
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             } else {
-                                Image(colorScheme == .dark ? "github-dark" : "github-light")
+                                Image("github-dark")
                                     .resizable()
                                     .frame(width: 24, height: 24)
                             }
@@ -184,3 +184,13 @@ struct VerticalTextSlideShow: View {
 #Preview {
     SignInView(authViewModel: AuthViewModel())
 }
+
+
+
+
+
+
+
+
+
+
