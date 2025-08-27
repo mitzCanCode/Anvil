@@ -114,10 +114,17 @@ struct GitHubPullRequest: Codable, Identifiable {
     }
 }
 
+struct LanguageStats {
+    let name: String
+    let percentage: Double
+    let bytes: Int
+}
+
 struct RepositoryStats {
     let repository: GitHubRepository
     let openIssues: Int
     let openPullRequests: Int
+    let languageStats: [LanguageStats]
 }
 
 struct UserContributions: Codable {
@@ -299,18 +306,50 @@ class GitHubFetches {
         return pullRequests.count
     }
     
-    /// Fetches repository stats (repository info + open issues + open PRs) for a specific repository
+    /// Fetches language statistics for a specific repository
+    func fetchLanguageStats(for repository: GitHubRepository, oauthToken: String) async throws -> [LanguageStats] {
+        let endpoint = "repos/\(repository.fullName)/languages"
+        let request = try createRequest(for: endpoint, oauthToken: oauthToken)
+        
+        do {
+            let languageBytes: [String: Int] = try await performRequest(request, responseType: [String: Int].self)
+            
+            // If no languages found, return empty array
+            guard !languageBytes.isEmpty else {
+                return []
+            }
+            
+            // Calculate total bytes
+            let totalBytes = languageBytes.values.reduce(0, +)
+            
+            // Convert to LanguageStats with percentages
+            let languageStats = languageBytes.map { (language, bytes) in
+                let percentage = totalBytes > 0 ? (Double(bytes) / Double(totalBytes)) * 100.0 : 0.0
+                return LanguageStats(name: language, percentage: percentage, bytes: bytes)
+            }.sorted { $0.percentage > $1.percentage } // Sort by percentage descending
+            
+            return languageStats
+        } catch {
+            // If language endpoint fails (e.g. empty repo), return empty array
+            return []
+        }
+    }
+    
+    /// Fetches repository stats (repository info + open issues + open PRs + language stats) for a specific repository
     func fetchRepositoryStats(for repository: GitHubRepository, oauthToken: String) async throws -> RepositoryStats {
         async let openIssuesCount = fetchOpenIssuesCount(for: repository, oauthToken: oauthToken)
         async let openPRsCount = fetchOpenPullRequestsCount(for: repository, oauthToken: oauthToken)
+        async let languageStats = fetchLanguageStats(for: repository, oauthToken: oauthToken)
         
         let issues = try await openIssuesCount
         let prs = try await openPRsCount
+        let languages = try await languageStats
         
         return RepositoryStats(
             repository: repository,
             openIssues: issues,
-            openPullRequests: prs
+            openPullRequests: prs,
+            languageStats: languages
         )
     }
     

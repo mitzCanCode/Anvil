@@ -15,6 +15,9 @@ struct RepositorySectionView: View {
     let isLoading: Bool
     let isOtherRepos: Bool
     
+    @Environment(\.colorScheme) var colorScheme
+    @State private var showingAllRepositories = false
+    
     init(
         title: String,
         icon: String,
@@ -31,29 +34,72 @@ struct RepositorySectionView: View {
         self.isOtherRepos = isOtherRepos
     }
     
-    private var publicRepos: Int {
-        repositories.filter { !$0.repository.isPrivate }.count
+    private var stats: (public: Int, private: Int, stars: Int, issues: Int, prs: Int) {
+        repositories.reduce((0, 0, 0, 0, 0)) { result, repo in
+            (
+                result.0 + (repo.repository.isPrivate ? 0 : 1),
+                result.1 + (repo.repository.isPrivate ? 1 : 0),
+                result.2 + repo.repository.stargazersCount,
+                result.3 + repo.openIssues,
+                result.4 + repo.openPullRequests
+            )
+        }
     }
     
-    private var privateRepos: Int {
-        repositories.filter { $0.repository.isPrivate }.count
-    }
-    
-    private var totalStars: Int {
-        repositories.reduce(0) { $0 + $1.repository.stargazersCount }
-    }
-    
-    private var openIssues: Int {
-        repositories.reduce(0) { $0 + $1.openIssues }
-    }
-    
-    private var openPRs: Int {
-        repositories.reduce(0) { $0 + $1.openPullRequests }
+    @ViewBuilder
+    private var repositoryList: some View {
+        if isLoading {
+            VStack(spacing: 12) {
+                ForEach(0..<3, id: \.self) { _ in
+                    SkeletonCodeRepoButtonView()
+                }
+            }
+        } else if repositories.isEmpty {
+            Text("// No repositories found...")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .italic()
+                .monospaced()
+                .padding(16)
+                .frame(maxWidth: .infinity)
+                .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
+                .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.purple.opacity(0.3), lineWidth: 7)
+                )
+                .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+        } else {
+            VStack(spacing: 12) {
+                ForEach(Array(repositories.prefix(3))) { repository in
+                    CodeRepoButtonView(repositoryStats: repository)
+                }
+                
+                if repositories.count > 3 {
+                    Button("// and \(repositories.count - 3) more repositories...") {
+                        showingAllRepositories = true
+                    }
+                    .font(.caption)
+                    .foregroundColor(.purple)
+                    .italic()
+                    .monospaced()
+                    .padding(16)
+                    .frame(maxWidth: .infinity)
+                    .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
+                    .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.purple.opacity(0.3), lineWidth: 7)
+                    )
+                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    .buttonStyle(.plain)
+                }
+            }
+        }
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Header
             HStack {
                 Image(systemName: icon)
                     .font(.title2)
@@ -68,89 +114,41 @@ struct RepositorySectionView: View {
                 if isLoading {
                     ProgressView()
                         .scaleEffect(0.8)
-                } else {
-                    Text("\(repositories.count) repos")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
             }
             
-            // Stats Grid
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
-                if isLoading {
-                    SkeletonStatCardView(title: "Public Repos", icon: "folder", color: .blue)
-                    SkeletonStatCardView(title: "Private Repos", icon: "lock.fill", color: .orange)
-                    SkeletonStatCardView(title: "Stars", icon: "star.fill", color: .yellow)
-                    SkeletonStatCardView(title: "Open Issues", icon: "exclamationmark.circle", color: .red)
-                    SkeletonStatCardView(title: "Open PRs", icon: "arrow.triangle.pull", color: .green)
-                } else {
-                    StatCardView(
-                        title: "Public Repos",
-                        value: "\(publicRepos)",
-                        icon: "folder",
-                        color: .blue
-                    )
-                    
-                    StatCardView(
-                        title: "Private Repos",
-                        value: "\(privateRepos)",
-                        icon: "lock.fill",
-                        color: .orange
-                    )
-                    
-                    StatCardView(
-                        title: "Stars",
-                        value: "\(totalStars)",
-                        icon: "star.fill",
-                        color: .yellow
-                    )
-                    
-                    StatCardView(
-                        title: "Open Issues",
-                        value: "\(openIssues)",
-                        icon: "exclamationmark.circle",
-                        color: .red
-                    )
-                    
-                    StatCardView(
-                        title: "Open PRs",
-                        value: "\(openPRs)",
-                        icon: "arrow.triangle.pull",
-                        color: .green
-                    )
-                }
+            if isLoading {
+                SkeletonCodeStatsCardView(title: isOtherRepos ? "Other_repositories" : "My_repositories")
+            } else {
+                let computedStats = stats
+                CodeStatsCardView(
+                    title: isOtherRepos ? "Other_repositories" : "My_repositories",
+                    stats: [
+                        (key: "total_repos", value: "\(repositories.count)", icon: "folder.badge.gearshape"),
+                        (key: "public_repos", value: "\(computedStats.public)", icon: "folder"),
+                        (key: "private_repos", value: "\(computedStats.private)", icon: "lock.fill"),
+                        (key: "stars", value: "\(computedStats.stars)", icon: "star.fill"),
+                        (key: "open_issues", value: "\(computedStats.issues)", icon: "exclamationmark.circle"),
+                        (key: "open_prs", value: "\(computedStats.prs)", icon: "arrow.triangle.pull")
+                    ],
+                    isLoading: false
+                )
             }
             
-            // Recent Repositories
-            if isLoading || !repositories.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text(isOtherRepos ? "Recent Contributions" : "Recent")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                    
-                    if isLoading {
-                        LazyVStack(spacing: 8) {
-                            ForEach(0..<3, id: \.self) { _ in
-                                SkeletonRepositoryCardView()
-                            }
-                        }
-                    } else {
-                        LazyVStack(spacing: 8) {
-                            ForEach(Array(repositories.prefix(3))) { repository in
-                                RepositoryCardView(repositoryStats: repository)
-                            }
-                            
-                            if repositories.count > 3 {
-                                Text("and \(repositories.count - 3) more...")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .padding(.top, 4)
-                            }
-                        }
-                    }
-                }
+            VStack(alignment: .leading, spacing: 12) {
+                Text(isOtherRepos ? "Recent Contributions" : "Recent")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+                
+                repositoryList
             }
+        }
+        .sheet(isPresented: $showingAllRepositories) {
+            AllRepositoriesView(
+                title: title,
+                repositories: repositories
+            )
         }
     }
 }

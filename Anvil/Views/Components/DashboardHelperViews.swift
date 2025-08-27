@@ -13,6 +13,8 @@ struct ErrorView: View {
     let message: String
     let onRetry: () async -> Void
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle")
@@ -33,56 +35,29 @@ struct ErrorView: View {
                     await onRetry()
                 }
             }
-            .buttonStyle(.borderedProminent)
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
+            .background(Color.purple.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.purple.opacity(0.3), lineWidth: 7)
+            )
+            .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
         }
         .padding()
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-    }
-}
-
-// MARK: - Social Stats View
-
-struct SocialStatsView: View {
-    let user: GitHubUser?
-    let isLoading: Bool
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Image(systemName: "person.2")
-                    .font(.title2)
-                    .foregroundColor(.indigo)
-                
-                Text("Social")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                
-                Spacer()
-            }
-            
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
-                if isLoading {
-                    SkeletonStatCardView(title: "Followers", icon: "person.2.fill", color: .purple)
-                    SkeletonStatCardView(title: "Following", icon: "person.badge.plus", color: .indigo)
-                } else if let user = user {
-                    StatCardView(
-                        title: "Followers",
-                        value: "\(user.followers)",
-                        icon: "person.2.fill",
-                        color: .purple
-                    )
-                    
-                    StatCardView(
-                        title: "Following",
-                        value: "\(user.following)",
-                        icon: "person.badge.plus",
-                        color: .indigo
-                    )
-                } else {
-                    SkeletonStatCardView(title: "Followers", icon: "person.2.fill", color: .purple)
-                    SkeletonStatCardView(title: "Following", icon: "person.badge.plus", color: .indigo)
-                }
-            }
-        }
+        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
+        .background(
+            Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2),
+            in: RoundedRectangle(cornerRadius: 20)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(
+                    Color.purple.opacity(0.3),
+                    lineWidth: 8
+                )
+        )
+        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
 }

@@ -40,11 +40,13 @@ struct StatCardView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(16)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
+        .background(color.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(color.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(color.opacity(0.3), lineWidth: 8)
         )
+        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
     }
 }
 
@@ -125,7 +127,7 @@ struct RepositoryCardView: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                .stroke(Color.purple.opacity(0.3), lineWidth: 7)
         )
     }
     
@@ -176,11 +178,13 @@ struct SkeletonStatCardView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(16)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
+        .background(color.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(color.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(color.opacity(0.3), lineWidth: 8)
         )
+        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
     }
 }
 
@@ -230,7 +234,7 @@ struct SkeletonRepositoryCardView: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                    .stroke(Color.purple.opacity(0.3), lineWidth: 7)
         )
     }
 }
@@ -277,7 +281,8 @@ extension RepositoryStats: Identifiable {
                 isFork: false
             ),
             openIssues: 3,
-            openPullRequests: 2
+            openPullRequests: 2,
+            languageStats: []
         )
     )
     .padding()

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct UserProfileCardView: View {
     let user: GitHubUser?
+    let totalRepositories: Int
     let isLoading: Bool
     
     @Environment(\.colorScheme) var colorScheme
@@ -24,277 +25,302 @@ struct UserProfileCardView: View {
                 emptyContent
             }
         }
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
+        .background(
+            Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2),
+            in: RoundedRectangle(cornerRadius: 20)
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(
+                    Color.purple.opacity(0.3),
+                    lineWidth: 8
+                )
+        )
+        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
     
     // MARK: - Loading Content
     
     private var loadingContent: some View {
-        VStack(spacing: 16) {
-            // Avatar and basic info skeleton
-            HStack(spacing: 16) {
-                Circle()
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 80, height: 80)
-                    .redacted(reason: .placeholder)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    RoundedRectangle(cornerRadius: 8)
+        HStack(alignment: .center, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("// ")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    RoundedRectangle(cornerRadius: 4)
                         .fill(Color.gray.opacity(0.3))
-                        .frame(width: 140, height: 24)
+                        .frame(width: 180, height: 12)
                         .redacted(reason: .placeholder)
                     
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 100, height: 16)
-                        .redacted(reason: .placeholder)
-                    
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 120, height: 16)
-                        .redacted(reason: .placeholder)
+                    Spacer()
                 }
                 
-                Spacer()
-            }
-            
-            // Stats skeleton
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
-                ForEach(0..<3, id: \.self) { _ in
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 40, height: 20)
-                            .redacted(reason: .placeholder)
+                HStack {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 80, height: 16)
+                        .redacted(reason: .placeholder)
+                    
+                    Text(": {")
+                        .font(.body)
+                        .foregroundColor(.purple)
+                        .fontWeight(.bold)
+                        .monospaced()
+                    
+                    Spacer()
+                }
+                
+                ForEach(0..<6, id: \.self) { index in
+                    HStack {
+                        Text("    \"")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospaced()
                         
                         RoundedRectangle(cornerRadius: 4)
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 60, height: 12)
                             .redacted(reason: .placeholder)
+                        
+                        Text("\": ")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospaced()
+                        
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(width: 40, height: 12)
+                            .redacted(reason: .placeholder)
+                        
+                        Text(index < 5 ? "," : "")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospaced()
+                        
+                        Spacer()
                     }
                 }
+                
+                Text("}")
+                    .font(.body)
+                    .foregroundColor(.purple)
+                    .fontWeight(.bold)
+                    .monospaced()
             }
+            
+            Circle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 80, height: 80)
+                .redacted(reason: .placeholder)
         }
-        .padding(20)
+        .padding()
     }
     
     // MARK: - User Content
     
     private func userContent(_ user: GitHubUser) -> some View {
-        VStack(spacing: 20) {
-            // Header with avatar and basic info
-            HStack(spacing: 16) {
-                AsyncImage(url: URL(string: user.avatarUrl)) { image in
+        HStack(alignment: . center, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
+                if let name = user.name, !name.isEmpty {
+                    Text("// MARK: " + name)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .bold()
+                        .monospaced()
+                }
+                
+                if let bio = user.bio, !bio.isEmpty {
+                    Text("// " + bio)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .italic()
+                        .lineLimit(2)
+                        .monospaced()
+                }
+                
+                Text("\"" + user.login + "\": {")
+                    .font(.body)
+                    .fontWeight(.bold)
+                    .foregroundColor(.purple)
+                    .monospaced()
+                
+                if let location = user.location, !location.isEmpty {
+                    HStack {
+                        Text("    \"location\": \"")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospaced()
+                        
+                        Text(location)
+                            .font(.caption)
+                            .foregroundColor(.purple)
+                            .fontWeight(.semibold)
+                            .monospaced()
+                            .lineLimit(1)
+                        
+                        Text("\",")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospaced()
+                        
+                        Spacer()
+                    }
+                }
+                
+                HStack {
+                    Text("    \"followers\": ")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    Text("\(user.followers)")
+                        .font(.caption)
+                        .foregroundColor(.purple)
+                        .fontWeight(.semibold)
+                        .monospaced()
+                    
+                    Text(",")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    Spacer()
+                }
+                
+                HStack {
+                    Text("    \"following\": ")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    Text("\(user.following)")
+                        .font(.caption)
+                        .foregroundColor(.purple)
+                        .fontWeight(.semibold)
+                        .monospaced()
+                    
+                    Text(",")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    Spacer()
+                }
+                
+                HStack {
+                    Text("    \"repositories\": ")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    Text("\(totalRepositories)")
+                        .font(.caption)
+                        .foregroundColor(.purple)
+                        .fontWeight(.semibold)
+                        .monospaced()
+                    
+                    Text(",")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    Spacer()
+                }
+                
+                HStack {
+                    Text("    \"available_for_hire\": ")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    if let hireable = user.hireable {
+                        Text(hireable ? "true" : "false")
+                            .font(.caption)
+                            .foregroundColor(hireable ? .green : .orange)
+                            .fontWeight(.semibold)
+                            .monospaced()
+                    } else {
+                        Text("null")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                            .fontWeight(.semibold)
+                            .monospaced()
+                    }
+                    
+                    Text(",")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .monospaced()
+                    
+                    Spacer()
+                }
+                
+                if let joinDate = formatJoinDate(user.createdAt) {
+                    HStack {
+                        Text("    \"joined\": \"")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospaced()
+                        
+                        Text(joinDate)
+                            .font(.caption)
+                            .foregroundColor(.purple)
+                            .fontWeight(.semibold)
+                            .monospaced()
+                        
+                        Text("\"")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospaced()
+                        
+                        Spacer()
+                    }
+                }
+                
+                Text("}")
+                    .font(.body)
+                    .fontWeight(.bold)
+                    .foregroundColor(.purple)
+                    .monospaced()
+            }
+            AsyncImage(url: URL(string: user.avatarUrl)) { phase in
+                switch phase {
+                case .success(let image):
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                } placeholder: {
+                        .frame(width: 80, height: 80)
+                        .clipShape(Circle())
+                case .failure(_), .empty:
                     Circle()
                         .fill(Color.gray.opacity(0.3))
+                        .frame(width: 80, height: 80)
+                        .overlay {
+                            Image(systemName: "person.fill")
+                                .foregroundColor(.gray)
+                                .font(.title2)
+                        }
+                @unknown default:
+                    Circle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 80, height: 80)
                         .overlay {
                             Image(systemName: "person.fill")
                                 .foregroundColor(.gray)
                                 .font(.title2)
                         }
                 }
-                .frame(width: 80, height: 80)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-                )
-                
-                VStack(alignment: .leading, spacing: 6) {
-                    // Name
-                    if let name = user.name, !name.isEmpty {
-                        Text(name)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                    }
-                    
-                    // Username
-                    Text("@\(user.login)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    
-                    // Location
-                    if let location = user.location, !location.isEmpty {
-                        HStack(spacing: 4) {
-                            Image(systemName: "location")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            Text(location)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    
-                    // Company
-                    if let company = user.company, !company.isEmpty {
-                        HStack(spacing: 4) {
-                            Image(systemName: "building.2")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            Text(company.replacingOccurrences(of: "@", with: ""))
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-                
-                Spacer()
             }
-            
-            // Bio
-            if let bio = user.bio, !bio.isEmpty {
-                Text(bio)
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
-            // Social Stats
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
-                statItem(
-                    title: "Followers",
-                    value: "\(user.followers)",
-                    icon: "person.2.fill",
-                    color: .purple
-                )
-                
-                statItem(
-                    title: "Following",
-                    value: "\(user.following)",
-                    icon: "person.badge.plus",
-                    color: .blue
-                )
-                
-                statItem(
-                    title: "Repositories",
-                    value: "\(user.publicRepos)",
-                    icon: "folder.fill",
-                    color: .green
-                )
-            }
-            
-            // Links and Contact Info
-            if hasContactInfo(user) {
-                Divider()
-                    .padding(.vertical, 8)
-                
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 12) {
-                    // Website/Blog
-                    if let blog = user.blog, !blog.isEmpty, let url = URL(string: blog.hasPrefix("http") ? blog : "https://\(blog)") {
-                        contactButton(
-                            title: "Website",
-                            icon: "link",
-                            color: .orange
-                        ) {
-                            openURL(url)
-                        }
-                    }
-                    
-                    // Twitter
-                    if let twitter = user.twitterUsername, !twitter.isEmpty {
-                        contactButton(
-                            title: "Twitter",
-                            icon: "bird.fill",
-                            color: .blue
-                        ) {
-                            if let url = URL(string: "https://twitter.com/\(twitter)") {
-                                openURL(url)
-                            }
-                        }
-                    }
-                    
-                    // Email
-                    if let email = user.email, !email.isEmpty {
-                        contactButton(
-                            title: "Email",
-                            icon: "envelope.fill",
-                            color: .red
-                        ) {
-                            if let url = URL(string: "mailto:\(email)") {
-                                openURL(url)
-                            }
-                        }
-                    }
-                    
-                    // GitHub Profile
-                    contactButton(
-                        title: "GitHub",
-                        icon: "chevron.left.forwardslash.chevron.right",
-                        color: .gray
-                    ) {
-                        if let url = URL(string: "https://github.com/\(user.login)") {
-                            openURL(url)
-                        }
-                    }
-                }
-            }
-            
-            // Additional Info
-            if hasAdditionalInfo(user) {
-                Divider()
-                    .padding(.vertical, 8)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Additional Information")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    VStack(spacing: 6) {
-                        // Hireable status
-                        if let hireable = user.hireable, hireable {
-                            HStack(spacing: 8) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.caption)
-                                    .foregroundColor(.green)
-                                Text("Available for hire")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                        }
-                        
-                        // Join date
-                        if let joinDate = formatJoinDate(user.createdAt) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "calendar")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Text("Joined \(joinDate)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                        }
-                        
-                        // Public Gists
-                        if user.publicGists > 0 {
-                            HStack(spacing: 8) {
-                                Image(systemName: "doc.text")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Text("\(user.publicGists) public gists")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                        }
-                    }
-                }
-            }
+            .overlay(
+                Circle()
+                .stroke(Color.purple.opacity(0.3), lineWidth: 7)
+            )
         }
-        .padding(20)
+        .padding()
     }
     
     // MARK: - Empty Content
@@ -354,7 +380,7 @@ struct UserProfileCardView: View {
             .background(color.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(color.opacity(0.3), lineWidth: 1)
+                    .stroke(color.opacity(0.3), lineWidth: 4)
             )
         }
         .buttonStyle(.plain)
@@ -407,6 +433,7 @@ struct UserProfileCardView: View {
             createdAt: "2020-03-15T10:30:00Z",
             updatedAt: "2024-08-27T14:20:00Z"
         ),
+        totalRepositories: 42,
         isLoading: false
     )
     .padding()
@@ -415,7 +442,11 @@ struct UserProfileCardView: View {
 #Preview("User Profile Card Loading") {
     UserProfileCardView(
         user: nil,
+        totalRepositories: 0,
         isLoading: true
     )
     .padding()
 }
+
+
+

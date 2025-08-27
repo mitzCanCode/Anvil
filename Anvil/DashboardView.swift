@@ -15,10 +15,10 @@ struct DashboardView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                LazyVStack(spacing: 16) {
-                    // User Profile Card
+                VStack(spacing: 16) {
                     UserProfileCardView(
                         user: loadingState.userInfo,
+                        totalRepositories: loadingState.repositories.count,
                         isLoading: loadingState.isLoading
                     )
                     
@@ -27,31 +27,21 @@ struct DashboardView: View {
                             await refreshData()
                         }
                     } else {
-                        // My Repositories Section
                         RepositorySectionView(
                             title: "My Repositories",
                             icon: "person.crop.circle",
-                            iconColor: .blue,
+                            iconColor: .purple,
                             repositories: loadingState.myRepositories,
                             isLoading: loadingState.isLoading
                         )
                         
-                        // Other Repositories Section
-                        if !loadingState.otherRepositories.isEmpty || loadingState.isLoading {
-                            RepositorySectionView(
-                                title: "Other Repositories",
-                                icon: "globe",
-                                iconColor: .purple,
-                                repositories: loadingState.otherRepositories,
-                                isLoading: loadingState.isLoading,
-                                isOtherRepos: true
-                            )
-                        }
-                        
-                        // Social Stats
-                        SocialStatsView(
-                            user: loadingState.userInfo,
-                            isLoading: loadingState.isLoading
+                        RepositorySectionView(
+                            title: "Other Repositories",
+                            icon: "globe",
+                            iconColor: .purple,
+                            repositories: loadingState.otherRepositories,
+                            isLoading: loadingState.isLoading,
+                            isOtherRepos: true
                         )
                     }
                 }
@@ -69,9 +59,7 @@ struct DashboardView: View {
                 )
             )
             .navigationTitle("Dashboard")
-            .refreshable {
-                await refreshData()
-            }
+            .refreshable(action: refreshData)
             .onAppear {
                 Task {
                     await loadDataIfNeeded()
@@ -80,7 +68,7 @@ struct DashboardView: View {
         }
     }
     
-    // MARK: - Private Methods
+    // MARK: - Helper Methods
     
     private func loadDataIfNeeded() async {
         guard loadingState.userInfo == nil else { return }
