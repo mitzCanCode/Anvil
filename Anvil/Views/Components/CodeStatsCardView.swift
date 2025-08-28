@@ -37,18 +37,18 @@ struct CodeStatsCardView: View {
                             Circle()
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(width: 16, height: 16)
-                                .redacted(reason: .placeholder)
+                                .shimmer(duration: 1.6, highlight: .white.opacity(0.5))
                             
                             VStack(alignment: .leading, spacing: 4) {
                                 RoundedRectangle(cornerRadius: 4)
                                     .fill(Color.gray.opacity(0.3))
                                     .frame(width: 60, height: 12)
-                                    .redacted(reason: .placeholder)
+                                    .shimmer(duration: 1.6, highlight: .white.opacity(0.5))
                                 
                                 RoundedRectangle(cornerRadius: 3)
                                     .fill(Color.gray.opacity(0.3))
                                     .frame(width: 30, height: 10)
-                                    .redacted(reason: .placeholder)
+                                    .shimmer(duration: 1.6, highlight: .white.opacity(0.5))
                             }
                             
                             Spacer(minLength: 0)

@@ -49,19 +49,19 @@ struct UserProfileCardView: View {
                 RoundedRectangle(cornerRadius: 6)
                     .fill(Color.gray.opacity(0.3))
                     .frame(width: 140, height: 20)
-                    .redacted(reason: .placeholder)
+                    .shimmer(duration: 1.8, highlight: .white.opacity(0.4))
                 
                 // Bio skeleton
                 VStack(alignment: .leading, spacing: 4) {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 180, height: 12)
-                        .redacted(reason: .placeholder)
+                        .shimmer(duration: 1.8, highlight: .white.opacity(0.4))
                     
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 120, height: 12)
-                        .redacted(reason: .placeholder)
+                        .shimmer(duration: 1.8, highlight: .white.opacity(0.4))
                 }
                 
                 // Stats skeleton
@@ -71,12 +71,12 @@ struct UserProfileCardView: View {
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(width: 30, height: 16)
-                                .redacted(reason: .placeholder)
+                                .shimmer(duration: 1.8, highlight: .white.opacity(0.4))
                             
                             RoundedRectangle(cornerRadius: 3)
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(width: 50, height: 10)
-                                .redacted(reason: .placeholder)
+                                .shimmer(duration: 1.8, highlight: .white.opacity(0.4))
                         }
                     }
                     Spacer()
@@ -86,7 +86,7 @@ struct UserProfileCardView: View {
             Circle()
                 .fill(Color.gray.opacity(0.3))
                 .frame(width: 80, height: 80)
-                .redacted(reason: .placeholder)
+                .shimmer(duration: 1.8, highlight: .white.opacity(0.4))
         }
         .padding()
     }

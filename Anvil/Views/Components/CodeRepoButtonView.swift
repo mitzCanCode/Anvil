@@ -201,12 +201,12 @@ struct SkeletonCodeRepoButtonView: View {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 140, height: 18)
-                        .redacted(reason: .placeholder)
+                        .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                     
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 200, height: 14)
-                        .redacted(reason: .placeholder)
+                        .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                 }
                 
                 Spacer()
@@ -214,7 +214,7 @@ struct SkeletonCodeRepoButtonView: View {
                 Circle()
                     .fill(Color.gray.opacity(0.3))
                     .frame(width: 24, height: 24)
-                    .redacted(reason: .placeholder)
+                    .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
             }
             
             // Statistics row skeleton
@@ -224,12 +224,12 @@ struct SkeletonCodeRepoButtonView: View {
                         Circle()
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 12, height: 12)
-                            .redacted(reason: .placeholder)
+                            .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                         
                         RoundedRectangle(cornerRadius: 3)
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 20, height: 12)
-                            .redacted(reason: .placeholder)
+                            .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                     }
                 }
                 Spacer()
@@ -240,7 +240,7 @@ struct SkeletonCodeRepoButtonView: View {
                 RoundedRectangle(cornerRadius: 3)
                     .fill(Color.gray.opacity(0.3))
                     .frame(width: 60, height: 12)
-                    .redacted(reason: .placeholder)
+                    .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                 
                 HStack(spacing: 12) {
                     ForEach(0..<2, id: \.self) { _ in
@@ -248,17 +248,17 @@ struct SkeletonCodeRepoButtonView: View {
                             Circle()
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(width: 8, height: 8)
-                                .redacted(reason: .placeholder)
+                                .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                             
                             RoundedRectangle(cornerRadius: 3)
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(width: 40, height: 10)
-                                .redacted(reason: .placeholder)
+                                .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                             
                             RoundedRectangle(cornerRadius: 3)
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(width: 30, height: 10)
-                                .redacted(reason: .placeholder)
+                                .shimmer(duration: 1.4, highlight: .white.opacity(0.6))
                         }
                     }
                     Spacer()
