@@ -15,100 +15,102 @@ struct CodeStatsCardView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Title with coding style
+        VStack(alignment: .leading, spacing: 16) {
+            // Title section
             HStack {
-                Text(title + " {")
+                Text(title.replacingOccurrences(of: "_", with: " ").capitalized)
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.purple)
-                    .monospaced()
+                    .foregroundColor(.primary)
                 
                 Spacer()
             }
             
             if isLoading {
-                // Loading skeleton
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(0..<5, id: \.self) { _ in
-                        HStack {
-                            Text("  \"")
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .monospaced()
-                            
-                            RoundedRectangle(cornerRadius: 4)
+                // Loading skeleton in 2-column grid
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 16),
+                    GridItem(.flexible(), spacing: 16)
+                ], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { _ in
+                        HStack(spacing: 8) {
+                            Circle()
                                 .fill(Color.gray.opacity(0.3))
-                                .frame(width: 80, height: 16)
+                                .frame(width: 16, height: 16)
                                 .redacted(reason: .placeholder)
                             
-                            Text("\": ")
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .monospaced()
+                            VStack(alignment: .leading, spacing: 4) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(width: 60, height: 12)
+                                    .redacted(reason: .placeholder)
+                                
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(width: 30, height: 10)
+                                    .redacted(reason: .placeholder)
+                            }
                             
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 40, height: 16)
-                                .redacted(reason: .placeholder)
-                            
-                            Text(",")
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .monospaced()
-                            
-                            Spacer()
+                            Spacer(minLength: 0)
                         }
                     }
                 }
             } else {
-                // Stats content
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(Array(stats.enumerated()), id: \.offset) { index, stat in
-                        HStack(spacing: 4) {
-                            Text("  \"")
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .monospaced()
-                            
-                            Image(systemName: stat.icon)
-                                .font(.caption)
-                                .foregroundColor(.purple)
-                            
-                            Text(stat.key)
-                                .font(.body)
-                                .foregroundColor(.purple)
-                                .fontWeight(.medium)
-                                .monospaced()
-                            
-                            Text("\": ")
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .monospaced()
-                            
-                            Text(stat.value)
-                                .font(.body)
-                                .foregroundColor(.purple)
-                                .fontWeight(.semibold)
-                                .monospaced()
-                            
-                            Text(index == stats.count - 1 ? "" : ",")
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .monospaced()
-                            
-                            Spacer()
+                // Stats content in 2 columns with proper grouping
+                HStack(alignment: .top, spacing: 16) {
+                    // Left column (first half of stats)
+                    VStack(spacing: 12) {
+                        ForEach(Array(stats.prefix(3).enumerated()), id: \.offset) { _, stat in
+                            HStack(spacing: 8) {
+                                Image(systemName: stat.icon)
+                                    .font(.subheadline)
+                                    .foregroundColor(.purple)
+                                    .frame(width: 16)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(stat.key.replacingOccurrences(of: "_", with: " ").capitalized)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                    
+                                    Text(stat.value)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer(minLength: 0)
+                            }
+                        }
+                    }
+                    
+                    // Right column (second half of stats)
+                    VStack(spacing: 12) {
+                        ForEach(Array(stats.suffix(3).enumerated()), id: \.offset) { _, stat in
+                            HStack(spacing: 8) {
+                                Image(systemName: stat.icon)
+                                    .font(.subheadline)
+                                    .foregroundColor(.purple)
+                                    .frame(width: 16)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(stat.key.replacingOccurrences(of: "_", with: " ").capitalized)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                    
+                                    Text(stat.value)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer(minLength: 0)
+                            }
                         }
                     }
                 }
             }
-            
-            // Closing brace
-            Text("}")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.purple)
-                .monospaced()
         }
         .padding(20)
         .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))

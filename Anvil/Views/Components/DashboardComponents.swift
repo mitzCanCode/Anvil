@@ -133,17 +133,39 @@ struct RepositoryCardView: View {
     
     private func languageColor(for language: String) -> Color {
         switch language.lowercased() {
-        case "swift": return .orange
-        case "python": return .yellow
-        case "javascript", "typescript": return .yellow
-        case "java": return .red
-        case "kotlin": return .purple
-        case "go": return .cyan
-        case "rust": return .orange
-        case "c++", "c": return .blue
-        case "ruby": return .red
-        case "php": return .purple
-        default: return .gray
+        // GitHub official language colors
+        case "swift": return Color(red: 0.98, green: 0.36, blue: 0.11) // #FA5B2D
+        case "python": return Color(red: 0.22, green: 0.49, blue: 0.72) // #3776AB
+        case "javascript": return Color(red: 0.95, green: 0.84, blue: 0.15) // #F1E05A
+        case "typescript": return Color(red: 0.18, green: 0.39, blue: 0.73) // #2F74C0
+        case "java": return Color(red: 0.69, green: 0.33, blue: 0.13) // #B07219
+        case "kotlin": return Color(red: 0.63, green: 0.47, blue: 1.0) // #A97BFF
+        case "go": return Color(red: 0.00, green: 0.68, blue: 0.94) // #00ADD8
+        case "rust": return Color(red: 0.87, green: 0.38, blue: 0.11) // #DEA584
+        case "c++": return Color(red: 0.95, green: 0.30, blue: 0.44) // #F34B7D
+        case "c": return Color(red: 0.34, green: 0.34, blue: 0.34) // #555555
+        case "ruby": return Color(red: 0.44, green: 0.09, blue: 0.09) // #701516
+        case "php": return Color(red: 0.31, green: 0.40, blue: 0.68) // #4F5D95
+        case "html": return Color(red: 0.89, green: 0.30, blue: 0.18) // #E34C26
+        case "css": return Color(red: 0.09, green: 0.42, blue: 0.80) // #1572B6
+        case "shell": return Color(red: 0.54, green: 0.67, blue: 0.22) // #89E051
+        case "objective-c": return Color(red: 0.27, green: 0.39, blue: 0.71) // #438EFF
+        case "c#": return Color(red: 0.15, green: 0.46, blue: 0.02) // #239120
+        case "dart": return Color(red: 0.00, green: 0.69, blue: 0.93) // #00B4AB
+        case "scala": return Color(red: 0.78, green: 0.25, blue: 0.23) // #C22D40
+        case "r": return Color(red: 0.31, green: 0.51, blue: 0.71) // #198CE7
+        case "matlab": return Color(red: 0.88, green: 0.41, blue: 0.05) // #E16737
+        case "vue": return Color(red: 0.25, green: 0.72, blue: 0.32) // #41B883
+        case "haskell": return Color(red: 0.36, green: 0.31, blue: 0.60) // #5E4F87
+        case "lua": return Color(red: 0.00, green: 0.00, blue: 0.50) // #000080
+        case "perl": return Color(red: 0.02, green: 0.31, blue: 0.60) // #0298C3
+        case "powershell": return Color(red: 0.01, green: 0.22, blue: 0.39) // #012456
+        case "dockerfile": return Color(red: 0.23, green: 0.56, blue: 0.98) // #384D54
+        case "yaml", "yml": return Color(red: 0.80, green: 0.12, blue: 0.26) // #CB171E
+        case "json": return Color(red: 0.17, green: 0.17, blue: 0.17) // #292929
+        case "xml": return Color(red: 0.00, green: 0.40, blue: 0.20) // #0060AC
+        case "markdown", "md": return Color(red: 0.08, green: 0.17, blue: 0.32) // #083FA1
+        default: return Color.gray
         }
     }
 }

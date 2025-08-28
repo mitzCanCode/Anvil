@@ -43,73 +43,44 @@ struct UserProfileCardView: View {
     // MARK: - Loading Content
     
     private var loadingContent: some View {
-        HStack(alignment: .center, spacing: 10) {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text("// ")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
+        HStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) {
+                // Name skeleton
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 140, height: 20)
+                    .redacted(reason: .placeholder)
+                
+                // Bio skeleton
+                VStack(alignment: .leading, spacing: 4) {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 180, height: 12)
                         .redacted(reason: .placeholder)
                     
-                    Spacer()
-                }
-                
-                HStack {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.gray.opacity(0.3))
-                        .frame(width: 80, height: 16)
+                        .frame(width: 120, height: 12)
                         .redacted(reason: .placeholder)
-                    
-                    Text(": {")
-                        .font(.body)
-                        .foregroundColor(.purple)
-                        .fontWeight(.bold)
-                        .monospaced()
-                    
+                }
+                
+                // Stats skeleton
+                HStack(spacing: 16) {
+                    ForEach(0..<3, id: \.self) { _ in
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: 30, height: 16)
+                                .redacted(reason: .placeholder)
+                            
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: 50, height: 10)
+                                .redacted(reason: .placeholder)
+                        }
+                    }
                     Spacer()
                 }
-                
-                ForEach(0..<6, id: \.self) { index in
-                    HStack {
-                        Text("    \"")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .monospaced()
-                        
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 60, height: 12)
-                            .redacted(reason: .placeholder)
-                        
-                        Text("\": ")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .monospaced()
-                        
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 40, height: 12)
-                            .redacted(reason: .placeholder)
-                        
-                        Text(index < 5 ? "," : "")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .monospaced()
-                        
-                        Spacer()
-                    }
-                }
-                
-                Text("}")
-                    .font(.body)
-                    .foregroundColor(.purple)
-                    .fontWeight(.bold)
-                    .monospaced()
             }
             
             Circle()
@@ -123,169 +94,73 @@ struct UserProfileCardView: View {
     // MARK: - User Content
     
     private func userContent(_ user: GitHubUser) -> some View {
-        HStack(alignment: . center, spacing: 10) {
-            VStack(alignment: .leading, spacing: 6) {
-                if let name = user.name, !name.isEmpty {
-                    Text("// MARK: " + name)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .bold()
-                        .monospaced()
-                }
-                
-                if let bio = user.bio, !bio.isEmpty {
-                    Text("// " + bio)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .italic()
-                        .lineLimit(2)
-                        .monospaced()
-                }
-                
-                Text("\"" + user.login + "\": {")
-                    .font(.body)
-                    .fontWeight(.bold)
-                    .foregroundColor(.purple)
-                    .monospaced()
-                
-                if let location = user.location, !location.isEmpty {
-                    HStack {
-                        Text("    \"location\": \"")
+        HStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .leading, spacing: 16) {
+                // Header section
+                VStack(alignment: .leading, spacing: 8) {
+                    if let name = user.name, !name.isEmpty {
+                        Text(name)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                    }
+                    
+                    Text("@" + user.login)
+                        .font(.subheadline)
+                        .foregroundColor(.purple)
+                        .fontWeight(.medium)
+                    
+                    if let bio = user.bio, !bio.isEmpty {
+                        Text(bio)
                             .font(.caption)
                             .foregroundColor(.secondary)
-                            .monospaced()
-                        
-                        Text(location)
-                            .font(.caption)
-                            .foregroundColor(.purple)
-                            .fontWeight(.semibold)
-                            .monospaced()
-                            .lineLimit(1)
-                        
-                        Text("\",")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .monospaced()
-                        
-                        Spacer()
+                            .lineLimit(2)
+                    }
+                    
+                    if let location = user.location, !location.isEmpty {
+                        HStack(spacing: 4) {
+                            Image(systemName: "location")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(location)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
                 
-                HStack {
-                    Text("    \"followers\": ")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    Text("\(user.followers)")
-                        .font(.caption)
-                        .foregroundColor(.purple)
-                        .fontWeight(.semibold)
-                        .monospaced()
-                    
-                    Text(",")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    Spacer()
+                // Stats section
+                HStack(spacing: 20) {
+                    statItem(title: "Followers", value: "\(user.followers)", icon: "person.2", color: .blue)
+                    statItem(title: "Following", value: "\(user.following)", icon: "person.badge.plus", color: .green)
+                    statItem(title: "Repos", value: "\(totalRepositories)", icon: "folder", color: .purple)
                 }
                 
-                HStack {
-                    Text("    \"following\": ")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    Text("\(user.following)")
-                        .font(.caption)
-                        .foregroundColor(.purple)
-                        .fontWeight(.semibold)
-                        .monospaced()
-                    
-                    Text(",")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    Spacer()
-                }
-                
-                HStack {
-                    Text("    \"repositories\": ")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    Text("\(totalRepositories)")
-                        .font(.caption)
-                        .foregroundColor(.purple)
-                        .fontWeight(.semibold)
-                        .monospaced()
-                    
-                    Text(",")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    Spacer()
-                }
-                
-                HStack {
-                    Text("    \"available_for_hire\": ")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    if let hireable = user.hireable {
-                        Text(hireable ? "true" : "false")
-                            .font(.caption)
-                            .foregroundColor(hireable ? .green : .orange)
-                            .fontWeight(.semibold)
-                            .monospaced()
-                    } else {
-                        Text("null")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                            .fontWeight(.semibold)
-                            .monospaced()
+                // Additional info
+                VStack(alignment: .leading, spacing: 6) {
+                    if let hireable = user.hireable, hireable {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                            Text("Available for hire")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                                .fontWeight(.medium)
+                        }
                     }
                     
-                    Text(",")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .monospaced()
-                    
-                    Spacer()
-                }
-                
-                if let joinDate = formatJoinDate(user.createdAt) {
-                    HStack {
-                        Text("    \"joined\": \"")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .monospaced()
-                        
-                        Text(joinDate)
-                            .font(.caption)
-                            .foregroundColor(.purple)
-                            .fontWeight(.semibold)
-                            .monospaced()
-                        
-                        Text("\"")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .monospaced()
-                        
-                        Spacer()
+                    if let joinDate = formatJoinDate(user.createdAt) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "calendar")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text("Joined \(joinDate)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
-                
-                Text("}")
-                    .font(.body)
-                    .fontWeight(.bold)
-                    .foregroundColor(.purple)
-                    .monospaced()
             }
             AsyncImage(url: URL(string: user.avatarUrl)) { phase in
                 switch phase {

@@ -55,20 +55,30 @@ struct RepositorySectionView: View {
                 }
             }
         } else if repositories.isEmpty {
-            Text("// No repositories found...")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .italic()
-                .monospaced()
-                .padding(16)
-                .frame(maxWidth: .infinity)
-                .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
-                .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.purple.opacity(0.3), lineWidth: 7)
-                )
-                .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+            VStack(spacing: 12) {
+                Image(systemName: "folder")
+                    .font(.title2)
+                    .foregroundColor(.secondary)
+                
+                Text("No repositories found")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .fontWeight(.medium)
+                
+                Text("Repositories will appear here once they're loaded")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity)
+            .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
+            .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.purple.opacity(0.3), lineWidth: 7)
+            )
+            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
         } else {
             VStack(spacing: 12) {
                 ForEach(Array(repositories.prefix(3))) { repository in
@@ -76,22 +86,34 @@ struct RepositorySectionView: View {
                 }
                 
                 if repositories.count > 3 {
-                    Button("// and \(repositories.count - 3) more repositories...") {
+                    Button {
                         showingAllRepositories = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "ellipsis")
+                                .font(.caption)
+                                .foregroundColor(.purple)
+                            
+                            Text("View all \(repositories.count) repositories")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.purple)
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.purple)
+                        }
+                        .padding(16)
+                        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
+                        .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.purple.opacity(0.3), lineWidth: 7)
+                        )
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     }
-                    .font(.caption)
-                    .foregroundColor(.purple)
-                    .italic()
-                    .monospaced()
-                    .padding(16)
-                    .frame(maxWidth: .infinity)
-                    .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
-                    .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.purple.opacity(0.3), lineWidth: 7)
-                    )
-                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     .buttonStyle(.plain)
                 }
             }
@@ -124,9 +146,11 @@ struct RepositorySectionView: View {
                 CodeStatsCardView(
                     title: isOtherRepos ? "Other_repositories" : "My_repositories",
                     stats: [
+                        // Left column - Repository info
                         (key: "total_repos", value: "\(repositories.count)", icon: "folder.badge.gearshape"),
                         (key: "public_repos", value: "\(computedStats.public)", icon: "folder"),
                         (key: "private_repos", value: "\(computedStats.private)", icon: "lock.fill"),
+                        // Right column - Activity metrics
                         (key: "stars", value: "\(computedStats.stars)", icon: "star.fill"),
                         (key: "open_issues", value: "\(computedStats.issues)", icon: "exclamationmark.circle"),
                         (key: "open_prs", value: "\(computedStats.prs)", icon: "arrow.triangle.pull")
