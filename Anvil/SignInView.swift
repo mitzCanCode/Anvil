@@ -9,8 +9,14 @@ import SwiftUI
 
 struct SignInView: View {
     @ObservedObject var authViewModel: AuthViewModel
-    @State private var isFloating = false
-    @State private var rotationAngle: Double = -8
+    @State private var isAnvilFloating = false
+    @State private var isCoffeeFloating = false
+    @State private var isGlassesFloating = false
+    @State private var isLaptopFloating = false
+    @State private var anvilRotationAngle: Double = -8
+    @State private var coffeeRotationAngle: Double = 5
+    @State private var glassesRotationAngle: Double = -3
+    @State private var laptopRotationAngle: Double = 2
     @Environment((\.colorScheme)) var colorScheme
     
     var body: some View {
@@ -26,26 +32,110 @@ struct SignInView: View {
 
                 }
                 
-                Image("AnvilWorking")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 170)
-                    .rotationEffect(.degrees(rotationAngle)) // Dynamic rotation
-                    .offset(y: isFloating ? -10 : 10) // Float up and down
-                    .animation(
-                        Animation.easeInOut(duration: 2.5)
-                            .repeatForever(autoreverses: true),
-                        value: isFloating
-                    )
-                    .animation(
-                        Animation.easeInOut(duration: 3.0)
-                            .repeatForever(autoreverses: true),
-                        value: rotationAngle
-                    )
-                    .onAppear {
-                        isFloating = true
-                        rotationAngle = -2 // Rotate to the right
+                // Floating Assets Layout
+                ZStack {
+                    // Main Anvil in center
+                    Image("AnvilFloating")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 120)
+                        .rotationEffect(.degrees(anvilRotationAngle))
+                        .offset(y: isAnvilFloating ? -8 : 8)
+                        .animation(
+                            Animation.easeInOut(duration: 2.8)
+                                .repeatForever(autoreverses: true),
+                            value: isAnvilFloating
+                        )
+                        .animation(
+                            Animation.easeInOut(duration: 3.2)
+                                .repeatForever(autoreverses: true),
+                            value: anvilRotationAngle
+                        )
+                    
+                    // Coffee floating top-left
+                    Image("Coffee")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 50)
+                        .rotationEffect(.degrees(coffeeRotationAngle))
+                        .offset(
+                            x: -80 + (isCoffeeFloating ? -5 : 5),
+                            y: -60 + (isCoffeeFloating ? -8 : 8)
+                        )
+                        .animation(
+                            Animation.easeInOut(duration: 3.1)
+                                .repeatForever(autoreverses: true),
+                            value: isCoffeeFloating
+                        )
+                        .animation(
+                            Animation.easeInOut(duration: 2.7)
+                                .repeatForever(autoreverses: true),
+                            value: coffeeRotationAngle
+                        )
+                    
+                    // Glasses floating top-right
+                    Image("Glasses")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 45)
+                        .rotationEffect(.degrees(glassesRotationAngle))
+                        .offset(
+                            x: 85 + (isGlassesFloating ? 5 : -5),
+                            y: -50 + (isGlassesFloating ? -6 : 6)
+                        )
+                        .animation(
+                            Animation.easeInOut(duration: 2.9)
+                                .repeatForever(autoreverses: true),
+                            value: isGlassesFloating
+                        )
+                        .animation(
+                            Animation.easeInOut(duration: 3.5)
+                                .repeatForever(autoreverses: true),
+                            value: glassesRotationAngle
+                        )
+                    
+                    // Laptop floating bottom
+                    Image("Laptop")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 55)
+                        .rotationEffect(.degrees(laptopRotationAngle))
+                        .offset(
+                            x: -10 + (isLaptopFloating ? -4 : 4),
+                            y: 80 + (isLaptopFloating ? 6 : -6)
+                        )
+                        .animation(
+                            Animation.easeInOut(duration: 3.4)
+                                .repeatForever(autoreverses: true),
+                            value: isLaptopFloating
+                        )
+                        .animation(
+                            Animation.easeInOut(duration: 2.6)
+                                .repeatForever(autoreverses: true),
+                            value: laptopRotationAngle
+                        )
+                }
+                .frame(height: 200)
+                .onAppear {
+                    // Start all floating animations with slight delays
+                    isAnvilFloating = true
+                    anvilRotationAngle = -2
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        isCoffeeFloating = true
+                        coffeeRotationAngle = 10
                     }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        isGlassesFloating = true
+                        glassesRotationAngle = -8
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                        isLaptopFloating = true
+                        laptopRotationAngle = 5
+                    }
+                }
                 
 
                 

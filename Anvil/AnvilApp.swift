@@ -44,6 +44,11 @@ struct AnvilApp: App {
                             Label("Calculator", systemImage: "plus.forwardslash.minus")
                         }
                     
+                    PaletteGeneratorView()
+                        .tabItem {
+                            Label("Palette", systemImage: "paintbrush.fill")
+                        }
+                    
                     MoreView(authViewModel: authVM)
                         .tabItem {
                             Label("More", systemImage: "ellipsis.circle")
