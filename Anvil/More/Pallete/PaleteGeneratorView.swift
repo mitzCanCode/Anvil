@@ -2,7 +2,7 @@
 //  PaletteGeneratorView.swift
 //  Anvil
 //
-//  Created by Assistant on 28/8/25.
+//  Created by Dimitris Chatzigeorgiou on 28/8/25.
 //
 
 import SwiftUI
@@ -149,13 +149,9 @@ struct PaletteGeneratorView: View {
             }
         }
         .padding(.vertical, 20)
-        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
-        .background(
-            Color.gray.opacity(systemColorScheme == .dark ? 0.3 : 0.2),
-            in: RoundedRectangle(cornerRadius: 20)
-        )
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     Color.purple.opacity(0.3),
                     lineWidth: 8
@@ -196,13 +192,9 @@ struct PaletteGeneratorView: View {
             }
         }
         .padding(.vertical, 20)
-        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
-        .background(
-            Color.gray.opacity(systemColorScheme == .dark ? 0.3 : 0.2),
-            in: RoundedRectangle(cornerRadius: 20)
-        )
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     Color.purple.opacity(0.3),
                     lineWidth: 8
@@ -255,13 +247,9 @@ struct PaletteGeneratorView: View {
             .padding(.vertical, 10)
         }
         .padding(.vertical, 20)
-        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
-        .background(
-            Color.gray.opacity(systemColorScheme == .dark ? 0.3 : 0.2),
-            in: RoundedRectangle(cornerRadius: 20)
-        )
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     Color.purple.opacity(0.3),
                     lineWidth: 8

@@ -49,6 +49,11 @@ struct AnvilApp: App {
                             Label("Palette", systemImage: "paintbrush.fill")
                         }
                     
+                    RegexGeneratorView()
+                        .tabItem {
+                            Label("Regex", systemImage: "curlybraces")
+                        }
+                    
                     MoreView(authViewModel: authVM)
                         .tabItem {
                             Label("More", systemImage: "ellipsis.circle")

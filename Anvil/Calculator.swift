@@ -185,13 +185,9 @@ struct CalculatorView: View {
                     }
                 }
                 .padding()
-                .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
-                .background(
-                    Color.purple.opacity(colorScheme == .dark ? 0.3 : 0.2),
-                    in: RoundedRectangle(cornerRadius: 20)
-                )
+                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 16)
                         .stroke(
                             Color.purple.opacity(colorScheme == .dark ? 0.3 : 0.2),
                             lineWidth: 4
@@ -214,8 +210,7 @@ struct CalculatorView: View {
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, minHeight: 60)
-                        .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
-                        .background(Color.green.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+                        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.green.opacity(0.3), lineWidth: 5)
@@ -288,10 +283,9 @@ struct CalculatorView: View {
                 Image(systemName: "slider.vertical.3")
                     .font(.title2)
                     .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .frame(maxWidth: .infinity, minHeight: 60)
-                    .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
-                    .background(Color.purple.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+                    .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
                     .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.purple.opacity(0.3), lineWidth: 5))
                     .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
             }
@@ -305,10 +299,9 @@ struct CalculatorView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .monospaced()
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, minHeight: 60)
-                .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
-                .background(buttonColor(button), in: RoundedRectangle(cornerRadius: 16))
+                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(buttonColor(button).opacity(0.3), lineWidth: 5)

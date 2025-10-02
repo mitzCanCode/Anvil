@@ -40,8 +40,7 @@ struct StatCardView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(16)
-        .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
-        .background(color.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(color.opacity(0.3), lineWidth: 8)
@@ -124,9 +123,9 @@ struct RepositoryCardView: View {
             }
         }
         .padding(12)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.purple.opacity(0.3), lineWidth: 7)
         )
     }
@@ -200,8 +199,7 @@ struct SkeletonStatCardView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(16)
-        .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
-        .background(color.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(color.opacity(0.3), lineWidth: 8)
@@ -253,9 +251,9 @@ struct SkeletonRepositoryCardView: View {
             }
         }
         .padding(12)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.purple.opacity(0.3), lineWidth: 7)
         )
     }

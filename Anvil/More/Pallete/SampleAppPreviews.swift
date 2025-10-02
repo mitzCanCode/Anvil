@@ -2,7 +2,7 @@
 //  SampleAppPreviews.swift
 //  Anvil
 //
-//  Created by Assistant on 28/8/25.
+//  Created by Dimitris Chatzigeorgiou on 28/8/25.
 //
 
 import SwiftUI

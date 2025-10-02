@@ -25,13 +25,9 @@ struct UserProfileCardView: View {
                 emptyContent
             }
         }
-        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
-        .background(
-            Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2),
-            in: RoundedRectangle(cornerRadius: 20)
-        )
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     Color.purple.opacity(0.3),
                     lineWidth: 8
@@ -239,27 +235,6 @@ struct UserProfileCardView: View {
         .frame(maxWidth: .infinity)
     }
     
-    private func contactButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.caption)
-                    .foregroundColor(color)
-                Text(title)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.primary)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(color.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(color.opacity(0.3), lineWidth: 4)
-            )
-        }
-        .buttonStyle(.plain)
-    }
     
     // MARK: - Helper Functions
     

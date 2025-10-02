@@ -72,10 +72,9 @@ struct RepositorySectionView: View {
             }
             .padding(24)
             .frame(maxWidth: .infinity)
-            .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
-            .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.purple.opacity(0.3), lineWidth: 7)
             )
             .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
@@ -106,10 +105,9 @@ struct RepositorySectionView: View {
                                 .foregroundColor(.purple)
                         }
                         .padding(16)
-                        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 12))
-                        .background(Color.gray.opacity(colorScheme == .dark ? 0.2 : 0.15), in: RoundedRectangle(cornerRadius: 12))
+                        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.purple.opacity(0.3), lineWidth: 7)
                         )
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)

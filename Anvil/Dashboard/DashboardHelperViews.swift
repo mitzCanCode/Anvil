@@ -37,8 +37,7 @@ struct ErrorView: View {
             }
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .background(.thinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 16))
-            .background(Color.purple.opacity(0.8), in: RoundedRectangle(cornerRadius: 16))
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.purple.opacity(0.3), lineWidth: 7)
@@ -46,13 +45,9 @@ struct ErrorView: View {
             .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
         }
         .padding()
-        .background(.ultraThinMaterial.blendMode(.overlay), in: RoundedRectangle(cornerRadius: 20))
-        .background(
-            Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2),
-            in: RoundedRectangle(cornerRadius: 20)
-        )
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     Color.purple.opacity(0.3),
                     lineWidth: 8
