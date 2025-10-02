@@ -37,7 +37,7 @@ struct ErrorView: View {
             }
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+            .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.purple.opacity(0.3), lineWidth: 7)
@@ -45,7 +45,7 @@ struct ErrorView: View {
             .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
         }
         .padding()
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+        .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(

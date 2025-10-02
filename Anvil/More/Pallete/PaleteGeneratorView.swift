@@ -43,16 +43,7 @@ struct PaletteGeneratorView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 20)
             }
-            .background(
-                LinearGradient(
-                    colors: [
-                        Color.blue.opacity(systemColorScheme == .dark ? 0.1 : 0.3),
-                        Color.purple.opacity(systemColorScheme == .dark ? 0.1 : 0.3)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .customViewBackground()
             .navigationTitle("Palette Generator")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -143,13 +134,14 @@ struct PaletteGeneratorView: View {
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.center)
                         }
+                        .padding()
                     }
                 }
                 .padding(.horizontal, 20)
             }
         }
         .padding(.vertical, 20)
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+        .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(
@@ -192,7 +184,7 @@ struct PaletteGeneratorView: View {
             }
         }
         .padding(.vertical, 20)
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+        .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(
@@ -247,7 +239,7 @@ struct PaletteGeneratorView: View {
             .padding(.vertical, 10)
         }
         .padding(.vertical, 20)
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+        .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(

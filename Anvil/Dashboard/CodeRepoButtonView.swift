@@ -178,7 +178,7 @@ struct CodeRepoButtonView: View {
                 }
             }
             .padding(16)
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 12))
+            .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 12))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(Color.purple.opacity(0.3), lineWidth: 8)
@@ -265,7 +265,7 @@ struct SkeletonCodeRepoButtonView: View {
             }
         }
         .padding(16)
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+        .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.purple.opacity(0.3), lineWidth: 8)

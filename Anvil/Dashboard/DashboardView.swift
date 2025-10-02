@@ -48,16 +48,7 @@ struct DashboardView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 20)
             }
-            .background(
-                LinearGradient(
-                    colors: [
-                        Color.blue.opacity(colorScheme == .dark ? 0.1 : 0.3),
-                        Color.purple.opacity(colorScheme == .dark ? 0.1 : 0.3)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .customViewBackground()
             .navigationTitle("Dashboard")
             .refreshable(action: refreshData)
             .onAppear {

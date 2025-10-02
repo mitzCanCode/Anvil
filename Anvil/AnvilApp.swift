@@ -14,7 +14,7 @@ import AuthenticationServices
 // MARK: - App Delegate for Firebase
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
-                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         return true
     }
@@ -48,19 +48,22 @@ struct AnvilApp: App {
                         .tabItem {
                             Label("Palette", systemImage: "paintbrush.fill")
                         }
-                    
-                    RegexGeneratorView()
+                    SwiftMainView()
                         .tabItem {
-                            Label("Regex", systemImage: "curlybraces")
+                            Label("SwiftUI", systemImage: "swift")
                         }
+                    //                    RegexGeneratorView()
+                    //                        .tabItem {
+                    //                            Label("Regex", systemImage: "curlybraces")
+                    //                        }
                     
                     MoreView(authViewModel: authVM)
                         .tabItem {
                             Label("More", systemImage: "ellipsis.circle")
                         }
-                        
+                    
                 }
-                .tint(Color(.systemPurple))                
+                .tint(Color(.systemPurple))
             } else {
                 SignInView(authViewModel: authVM)
             }

@@ -72,7 +72,7 @@ struct RepositorySectionView: View {
             }
             .padding(24)
             .frame(maxWidth: .infinity)
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+            .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.purple.opacity(0.3), lineWidth: 7)
@@ -105,7 +105,7 @@ struct RepositorySectionView: View {
                                 .foregroundColor(.purple)
                         }
                         .padding(16)
-                        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+                        .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.purple.opacity(0.3), lineWidth: 7)
