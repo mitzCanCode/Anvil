@@ -142,13 +142,6 @@ struct PaletteGeneratorView: View {
         }
         .padding(.vertical, 20)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    Color.purple.opacity(0.3),
-                    lineWidth: 8
-                )
-        )
         .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
     
@@ -185,13 +178,6 @@ struct PaletteGeneratorView: View {
         }
         .padding(.vertical, 20)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    Color.purple.opacity(0.3),
-                    lineWidth: 8
-                )
-        )
         .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
     
@@ -240,13 +226,6 @@ struct PaletteGeneratorView: View {
         }
         .padding(.vertical, 20)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    Color.purple.opacity(0.3),
-                    lineWidth: 8
-                )
-        )
         .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
     

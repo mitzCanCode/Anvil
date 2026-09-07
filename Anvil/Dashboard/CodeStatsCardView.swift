@@ -114,10 +114,6 @@ struct CodeStatsCardView: View {
         }
         .padding(20)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.purple.opacity(0.3), lineWidth: 7)
-        )
         .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
     }
 }

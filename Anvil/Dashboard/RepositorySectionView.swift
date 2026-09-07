@@ -73,10 +73,6 @@ struct RepositorySectionView: View {
             .padding(24)
             .frame(maxWidth: .infinity)
             .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.purple.opacity(0.3), lineWidth: 7)
-            )
             .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
         } else {
             VStack(spacing: 12) {
@@ -106,10 +102,6 @@ struct RepositorySectionView: View {
                         }
                         .padding(16)
                         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.purple.opacity(0.3), lineWidth: 7)
-                        )
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     }
                     .buttonStyle(.plain)

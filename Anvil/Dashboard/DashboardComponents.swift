@@ -41,10 +41,6 @@ struct StatCardView: View {
         }
         .padding(16)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(color.opacity(0.3), lineWidth: 8)
-        )
         .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
     }
 }
@@ -124,10 +120,7 @@ struct RepositoryCardView: View {
         }
         .padding(12)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.purple.opacity(0.3), lineWidth: 7)
-        )
+        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
     
     private func languageColor(for language: String) -> Color {
@@ -200,11 +193,7 @@ struct SkeletonStatCardView: View {
         }
         .padding(16)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(color.opacity(0.3), lineWidth: 8)
-        )
-        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
+        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
 }
 
@@ -252,10 +241,7 @@ struct SkeletonRepositoryCardView: View {
         }
         .padding(12)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.purple.opacity(0.3), lineWidth: 7)
-        )
+        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
     }
 }
 

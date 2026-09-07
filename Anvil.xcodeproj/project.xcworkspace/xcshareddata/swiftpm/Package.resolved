@@ -1,5 +1,5 @@
 {
-  "originHash" : "e983e69953e84d4cc61c3f840774a0621c4c0b23ba945876647d438e35953e86",
+  "originHash" : "ba426df80a5987caac9dd1796da7906f09d0ac24010332de80e021ab85802486",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -35,6 +35,15 @@
       "state" : {
         "revision" : "b9bf3adac18e6e3059167194aeb632f15a5ba4b2",
         "version" : "12.1.0"
+      }
+    },
+    {
+      "identity" : "gitdiff",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tornikegomareli/gitdiff.git",
+      "state" : {
+        "revision" : "114b571a6dd0660ec9a57ba58a897964020f6bc2",
+        "version" : "0.1.0"
       }
     },
     {

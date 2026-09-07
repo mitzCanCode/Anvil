@@ -186,13 +186,6 @@ struct CalculatorView: View {
                 }
                 .padding()
                 .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(
-                            Color.purple.opacity(colorScheme == .dark ? 0.3 : 0.2),
-                            lineWidth: 4
-                        )
-                )
                 .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
                 .padding(.horizontal)
                 
@@ -211,10 +204,6 @@ struct CalculatorView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, minHeight: 60)
                         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.green.opacity(0.3), lineWidth: 5)
-                        )
                         .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
                     }
                     .padding(.horizontal, 20)
@@ -277,7 +266,6 @@ struct CalculatorView: View {
                     .foregroundColor(.primary)
                     .frame(maxWidth: .infinity, minHeight: 60)
                     .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.purple.opacity(0.3), lineWidth: 5))
                     .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
             }
 
@@ -293,10 +281,6 @@ struct CalculatorView: View {
                 .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, minHeight: 60)
                 .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(buttonColor(button).opacity(0.3), lineWidth: 5)
-                )
                 .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 2)
         }
     }
