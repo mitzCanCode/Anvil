@@ -20,11 +20,6 @@ struct GitHubDashboardConnectView: View {
             Text("Connect GitHub to use Dashboard")
                 .font(.title2.bold())
 
-            Text("Anvil works without an account. Add a GitHub token only to view repository and profile statistics here.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
             SecureField("GitHub personal access token", text: $accessToken)
                 .textContentType(.password)
                 .textInputAutocapitalization(.never)
@@ -64,26 +59,11 @@ struct GitHubDashboardConnectView: View {
                     .multilineTextAlignment(.center)
             }
 
-            Text("Anvil works without an account. Add a GitHub token to view your stats.")
+            Text("Anvil works without an account. Add a GitHub token with classic `repo` permission to view your stats. Everything is read-only and stored securely on your devices keychain.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Classic token permission:")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                Text("repo")
-                    .font(.caption.monospaced().weight(.semibold))
-                    .foregroundStyle(.primary)
-
-                Text("Read-only. Stored securely in your device’s Keychain.")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(.horizontal)
     }
 }
 
