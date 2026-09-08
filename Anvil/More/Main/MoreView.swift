@@ -28,6 +28,7 @@ struct MoreView: View {
     init(authViewModel: AuthViewModel) {
         _authViewModel = ObservedObject(wrappedValue: authViewModel)
     }
+    
     private var selectedInterval: CheckInterval {
         CheckInterval(rawValue: checkIntervalRawValue) ?? MonitoringSettings.defaultCheckInterval
     }
@@ -39,200 +40,31 @@ struct MoreView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                // User Profile Section
-                Section {
-                    HStack(spacing: 16) {
-                        // Profile Image Placeholder
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 60, height: 60)
-                            .overlay(
-                                Image(systemName: "person.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.gray)
-                            )
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(authViewModel.user?.displayName ?? "GitHub User")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            
-                            if let email = authViewModel.user?.email {
-                                Text(email)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            Text("User ID: \(authViewModel.user?.uid.prefix(8) ?? "Unknown")...")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-                }
-                .listRowBackground(Color.clear)
-                
-                // App Settings Section
-                Section("Settings") {
-                    VStack {
-                        HStack {
-                            Image(systemName: "info.circle")
-                                .foregroundColor(.blue)
-                                .frame(width: 24)
-                            Text("About")
-                            Spacer()
-                            Text("Version 1.0")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
-                        
-                        HStack {
-                            Image(systemName: "questionmark.circle")
-                                .foregroundColor(.green)
-                                .frame(width: 24)
-                            Text("Help & Support")
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
-                        
-                        HStack {
-                            Image(systemName: "star.circle")
-                                .foregroundColor(.yellow)
-                                .frame(width: 24)
-                            Text("Rate App")
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
-                    }
-                    .padding()
-                    .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-                }
-                .listRowBackground(Color.clear)
-                
-                
-                Section {
-                    VStack {
-                        Picker("Check frequency", selection: $checkIntervalRawValue) {
-                            ForEach(CheckInterval.allCases) { interval in
-                                Text(interval.title).tag(interval.rawValue)
-                            }
-                        }
-                        .tint(Color.accent)
-                        .onChange(of: checkIntervalRawValue) { _, _ in
-                            CheckpointMonitoringService.shared.applySettingsChange()
-                        }
-                    }
-                    .padding()
-                    .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-                } header: {
-                    Text("Automatic checks")
-                } footer: {
-                    Text(selectedInterval.detail)
-                }
-                .listRowBackground(Color.clear)
-                
-                
-                Section {
-                    VStack {
-                        Picker("Unacceptable delay", selection: $responseTimeThresholdRawValue) {
-                            ForEach(ResponseTimeThreshold.allCases) { threshold in
-                                Text(threshold.title).tag(threshold.rawValue)
-                            }
-                        }
-                        .tint(Color.accent)
-                    }
-                    .padding()
-                    .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-                } header: {
-                    Text("Response time")
-                } footer: {
-                    Text(selectedResponseTimeThreshold.detail)
-                }
-                .listRowBackground(Color.clear)
-                
-                Section {
-                    VStack {
-                    Toggle("Notify when attention is needed", isOn: $notificationsEnabled)
-                        .onChange(of: notificationsEnabled) { _, isEnabled in
-                            guard isEnabled else { return }
-                            Task {
-                                await CheckpointNotificationManager.requestAuthorizationIfNeeded()
-                                await refreshNotificationAuthorization()
-                            }
-                        }
+            ScrollView {
+                VStack(spacing: 15) {
+                    profileSegment
                     
-                    if notificationsEnabled {
-                        notificationStatusRow
+                    automaticChecksSegment
+                    
+                    responseTimeSegment
+                    
+                    notificationsSegment
+                    
+                    aboutSegment
+                    
+                    if authViewModel.hasAccessToken {
+                        accountSegment
                     }
+                    
+                    footerSegment
                 }
                 .padding()
-                .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-                } header: {
-                    Text("Notifications")
-                } footer: {
-                    Text("You’ll only be notified when a scheduled check finds a problem (unreachable, mismatch, slow response, server error, and similar). Healthy and expected-mismatch results stay quiet.")
-                }
-                .listRowBackground(Color.clear)
-                
-                // Account Section
-                Section("Account") {
-                    Button(action: {
-                        authViewModel.signOut()
-                    }) {
-                        HStack {
-                            Image(systemName: "arrow.right.square")
-                                .foregroundColor(.red)
-                                .frame(width: 24)
-                            Text("Sign Out")
-                                .foregroundColor(.red)
-                            Spacer()
-                        }
-                    }
-                }
-                .listRowBackground(Color.clear)
-
-                
-                // Footer Section
-                Section {
-                    VStack(spacing: 12) {
-                        Text("Anvil")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                        
-                        Text("Built with SwiftUI and Firebase")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("© 2025 mitzCanCode")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 20)
-                }
-                .listRowBackground(Color.clear)
-
             }
-            .listStyle(.automatic)
-            .scrollContentBackground(.hidden)
             .customViewBackground()
             .navigationTitle("More")
             .task {
                 await refreshNotificationAuthorization()
+                await authViewModel.refreshUser()
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 Task {
@@ -241,6 +73,297 @@ struct MoreView: View {
             }
         }
     }
+    
+    // MARK: - Profile
+    
+    private var profileSegment: some View {
+        HStack(spacing: 16) {
+            Circle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 60, height: 60)
+                .overlay(
+                    Image(systemName: "person.fill")
+                        .font(.title2)
+                        .foregroundColor(.gray)
+                )
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(authViewModel.user?.name ?? authViewModel.user?.login ?? "GitHub not connected")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                if let login = authViewModel.user?.login {
+                    Text("@\(login)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                
+                Text(authViewModel.hasAccessToken ? "GitHub connected" : "GitHub dashboard is optional")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+    }
+    
+    // MARK: - Automatic Checks
+    
+    private var automaticChecksSegment: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center) {
+                Image(systemName: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.accentColor)
+                
+                VStack(alignment: .leading) {
+                    Text("Automatic checks")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Text(selectedInterval.detail)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Divider()
+            
+            HStack {
+                Spacer()
+                Picker("Check frequency", selection: $checkIntervalRawValue) {
+                    ForEach(CheckInterval.allCases) { interval in
+                        Text(interval.title).tag(interval.rawValue)
+                    }
+                }
+                Spacer()
+            }
+            .tint(Color.accent)
+            .onChange(of: checkIntervalRawValue) { _, _ in
+                CheckpointMonitoringService.shared.applySettingsChange()
+            }
+            .padding()
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+    }
+    
+    // MARK: - Response Time
+    
+    private var responseTimeSegment: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center) {
+                Image(systemName: "gauge.with.dots.needle.67percent")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.accentColor)
+                
+                VStack(alignment: .leading) {
+                    Text("Response time")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Text(selectedResponseTimeThreshold.detail)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Divider()
+            
+            HStack {
+                Spacer()
+                
+                Picker("Unacceptable delay", selection: $responseTimeThresholdRawValue) {
+                    ForEach(ResponseTimeThreshold.allCases) { threshold in
+                        Text(threshold.title).tag(threshold.rawValue)
+                        
+                    }
+                }
+                Spacer()
+            }
+            .tint(Color.accent)
+            .padding()
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+    }
+    
+    // MARK: - Notifications
+    
+    private var notificationsSegment: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center) {
+                Image(systemName: "bell.badge.fill")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.accentColor)
+                
+                VStack(alignment: .leading) {
+                    Text("Notifications")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Text("You’ll only be notified when a scheduled check finds a problem (unreachable, mismatch, slow response, server error, and similar). Healthy and expected-mismatch results stay quiet.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Divider()
+            
+            Toggle("Notify when attention is needed", isOn: $notificationsEnabled)
+                .onChange(of: notificationsEnabled) { _, isEnabled in
+                    guard isEnabled else { return }
+                    Task {
+                        await CheckpointNotificationManager.requestAuthorizationIfNeeded()
+                        await refreshNotificationAuthorization()
+                    }
+                }
+                .padding()
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+            
+            if notificationsEnabled {
+                notificationStatusRow
+                    .padding()
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+            }
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+    }
+    
+    // MARK: - About
+    
+    private var aboutSegment: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center) {
+                Image(systemName: "info.circle.fill")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.accentColor)
+                
+                Text("About")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+            }
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.blue)
+                        .frame(width: 24)
+                    Text("Version")
+                    Spacer()
+                    Text("1.0")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                .padding()
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+                
+                HStack {
+                    Image(systemName: "questionmark.circle")
+                        .foregroundColor(.green)
+                        .frame(width: 24)
+                    Text("Help & Support")
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                .padding()
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+                
+                HStack {
+                    Image(systemName: "star.circle")
+                        .foregroundColor(.yellow)
+                        .frame(width: 24)
+                    Text("Rate App")
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                .padding()
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+            }
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+    }
+    
+    // MARK: - Account
+    
+    private var accountSegment: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center) {
+                Image(systemName: "person.crop.circle.badge.minus")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.red)
+                
+                VStack(alignment: .leading) {
+                    Text("Account")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Text("Disconnect GitHub access from Anvil.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Divider()
+            
+            Button(action: {
+                authViewModel.signOut()
+            }) {
+                HStack {
+                    Spacer()
+                    Image(systemName: "link.badge.minus")
+                    Text("Disconnect GitHub")
+                        .bold()
+                    Spacer()
+                }
+                .foregroundColor(.red)
+                .padding()
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+            }
+        }
+        .padding()
+        .glassEffect(.regular.tint(.red.opacity(0.05)), in: .rect(cornerRadius: 15))
+    }
+    
+    // MARK: - Footer
+    
+    private var footerSegment: some View {
+        VStack(spacing: 12) {
+            Text("Anvil")
+                .font(.headline)
+                .fontWeight(.bold)
+            
+            Text("Built with SwiftUI")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            
+            Text("© 2026 mitzCanCode")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+    }
+    
+    // MARK: - Notification Status
     
     @ViewBuilder
     private var notificationStatusRow: some View {
