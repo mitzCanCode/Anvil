@@ -1,0 +1,274 @@
+@import "tailwindcss";
+
+:root {
+  --accent-color: #9333EA;
+  --accent-rgb: 147, 51, 234;
+}
+
+@keyframes accentFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+@keyframes accentFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-25px, 25px) scale(0.95); }
+  66% { transform: translate(20px, -15px) scale(1.08); }
+}
+
+@keyframes accentPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+.accent-blob-1 {
+  animation: accentFloat1 12s ease-in-out infinite, accentPulse 8s ease-in-out infinite;
+}
+
+.accent-blob-2 {
+  animation: accentFloat2 14s ease-in-out infinite, accentPulse 10s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.accent-blob-3 {
+  animation: accentFloat1 16s ease-in-out infinite, accentPulse 12s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+@keyframes slideUpFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.06),
+                0 0 40px rgba(var(--accent-rgb), 0.03),
+                0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(var(--accent-rgb), 0.18),
+                0 0 60px rgba(var(--accent-rgb), 0.07),
+                0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes glowPulseDark {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.1),
+                0 0 45px rgba(var(--accent-rgb), 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.25),
+                0 0 70px rgba(var(--accent-rgb), 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+}
+
+#values-carousel {
+  overflow: visible;
+}
+
+.carousel-slide {
+  opacity: 0 !important;
+  visibility: hidden;
+  transform: none !important;
+  transition: opacity 0.7s ease-in-out, visibility 0s linear 0.7s, box-shadow 0.5s ease-out, border-color 0.3s ease, filter 0.6s ease-out !important;
+  position: absolute !important;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-slide.active {
+  opacity: 1 !important;
+  visibility: visible;
+  transition-delay: 0s !important;
+  position: relative !important;
+  animation: glowPulse 3.5s ease-in-out infinite;
+  border-color: rgba(var(--accent-rgb), 0.12);
+}
+
+.carousel-slide.active:hover {
+  border-color: rgba(var(--accent-rgb), 0.35) !important;
+}
+
+.dark .carousel-slide.active {
+  animation-name: glowPulseDark;
+  border-color: rgba(var(--accent-rgb), 0.15);
+}
+
+.dark .carousel-slide.active:hover {
+  border-color: rgba(var(--accent-rgb), 0.4) !important;
+}
+
+/* Service card dynamic glow */
+.service-card {
+  transition: box-shadow 0.5s ease-out, border-color 0.4s ease, filter 0.6s ease-out !important;
+}
+
+.service-card:hover {
+  border-color: rgba(var(--accent-rgb), 0.3) !important;
+}
+
+.dark .service-card:hover {
+  border-color: rgba(var(--accent-rgb), 0.35) !important;
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile menu overlay */
+.mobile-overlay {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.mobile-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.mobile-overlay .menu-item {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.mobile-overlay.open .menu-item:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0.05s; }
+.mobile-overlay.open .menu-item:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.1s; }
+.mobile-overlay.open .menu-item:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.15s; }
+.mobile-overlay.open .menu-item:nth-child(4) { opacity: 1; transform: translateX(0); transition-delay: 0.2s; }
+.mobile-overlay.open .menu-item:nth-child(5) { opacity: 1; transform: translateX(0); transition-delay: 0.25s; }
+.mobile-overlay.open .menu-item:nth-child(6) { opacity: 1; transform: translateX(0); transition-delay: 0.3s; }
+
+/* ============================
+   Floating mascot scene
+   Mirrors the app's old sign-in screen: the anvil bobs in the middle
+   while the coffee, glasses and laptop drift around it at their own
+   pace, each with a slightly different duration so the loop never
+   looks synchronized.
+   ============================ */
+.hero__scene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2rem 1.5rem 4rem;
+}
+
+@media (min-width: 1024px) {
+  .hero__scene {
+    width: 50%;
+    padding: 0;
+  }
+}
+
+.anvil-scene {
+  position: relative;
+  width: min(78vw, 320px);
+  aspect-ratio: 1 / 1;
+}
+
+@media (min-width: 1024px) {
+  .anvil-scene {
+    width: min(34vw, 460px);
+  }
+}
+
+.anvil-scene__item {
+  position: absolute;
+  width: auto;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 18px 30px rgba(var(--accent-rgb), 0.18));
+  will-change: transform;
+}
+
+.anvil-scene__anvil {
+  width: 76%;
+  left: 12%;
+  top: 20%;
+  animation: anvilFloat 2.8s ease-in-out infinite alternate;
+}
+
+.anvil-scene__coffee {
+  width: 24%;
+  left: 0;
+  top: 4%;
+  animation: coffeeFloat 3.1s ease-in-out infinite alternate;
+}
+
+.anvil-scene__glasses {
+  width: 22%;
+  right: 2%;
+  top: 10%;
+  animation: glassesFloat 2.9s ease-in-out infinite alternate;
+  animation-delay: 0.2s;
+}
+
+.anvil-scene__laptop {
+  width: 26%;
+  left: 26%;
+  bottom: 2%;
+  animation: laptopFloat 3.4s ease-in-out infinite alternate;
+  animation-delay: 0.4s;
+}
+
+@keyframes anvilFloat {
+  from { transform: translateY(-10px) rotate(-7deg); }
+  to { transform: translateY(10px) rotate(-1deg); }
+}
+
+@keyframes coffeeFloat {
+  from { transform: translate(-6px, -10px) rotate(4deg); }
+  to { transform: translate(6px, 10px) rotate(11deg); }
+}
+
+@keyframes glassesFloat {
+  from { transform: translate(6px, -8px) rotate(-3deg); }
+  to { transform: translate(-6px, 8px) rotate(-9deg); }
+}
+
+@keyframes laptopFloat {
+  from { transform: translate(-5px, 8px) rotate(1deg); }
+  to { transform: translate(5px, -8px) rotate(6deg); }
+}
+
+/* Standalone bobbing mascot (about page hero) */
+.anvil-bob {
+  animation: anvilFloat 2.8s ease-in-out infinite alternate;
+  filter: drop-shadow(0 18px 30px rgba(var(--accent-rgb), 0.2));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accent-blob-1,
+  .accent-blob-2,
+  .accent-blob-3,
+  .anvil-scene__item,
+  .anvil-bob,
+  .carousel-slide.active,
+  .dark .carousel-slide.active {
+    animation: none !important;
+  }
+}

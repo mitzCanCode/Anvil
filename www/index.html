@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anvil — The multi-tool for your coding journey</title>
+  <link rel="stylesheet" href="/output.css">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <meta name="keywords" content="Anvil, developer tools, iOS, open source, uptime monitoring, API monitoring, website checks, GitHub dashboard, regex generator, color palette generator, developer calculator">
+  <meta name="description" content="Anvil is the open source iOS multi-tool for developers — monitor your websites and APIs, keep an eye on your GitHub repos, and reach for a regex builder, palette generator and dev calculator whenever you need them.">
+</head>
+<body class="overflow-x-hidden bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+
+<!-- Header -->
+<header class="fixed inset-x-0 top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur shadow-sm dark:shadow-white/5">
+  <nav class="flex items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
+    <div class="flex flex-col items-start lg:flex-1">
+      <a href="index.html" class="-m-1.5 p-1.5 text-lg font-bold tracking-tight text-black dark:text-white flex items-center gap-2">
+        <img src="/assets/logo.png" alt="Anvil logo" class="size-6">
+        Anvil
+      </a>
+    </div>
+
+    <!-- Mobile menu button -->
+    <div class="flex lg:hidden">
+      <button id="mobile-menu-btn" type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-black dark:text-white">
+        <span class="sr-only">Open main menu</span>
+        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Desktop nav -->
+    <div class="hidden lg:flex lg:gap-x-8">
+      <a href="index.html" class="text-sm font-semibold text-purple-500 transition-colors">Home</a>
+      <a href="contact.html" class="text-sm font-semibold text-black dark:text-white hover:text-purple-500 transition-colors">Contact</a>
+      <a href="about.html" class="text-sm font-semibold text-black dark:text-white hover:text-purple-500 transition-colors">About</a>
+      <a href="https://github.com/mitzCanCode/Anvil" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-black dark:text-white hover:text-purple-500 transition-colors flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </nav>
+
+</header>
+
+<!-- Mobile menu overlay -->
+<div id="mobile-menu" class="mobile-overlay fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/90 dark:bg-black/90 backdrop-blur-sm px-8 lg:hidden">
+  <button id="mobile-menu-close" type="button" class="absolute top-5 right-6 p-2 text-black dark:text-white">
+    <span class="sr-only">Close menu</span>
+    <svg class="size-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  </button>
+  <nav class="flex flex-col items-center gap-6 text-center">
+    <a href="index.html" class="menu-item text-2xl font-bold text-purple-500 transition-colors">Home</a>
+    <a href="contact.html" class="menu-item text-2xl font-bold text-black dark:text-white hover:text-purple-500 transition-colors">Contact</a>
+    <a href="about.html" class="menu-item text-2xl font-bold text-black dark:text-white hover:text-purple-500 transition-colors">About</a>
+    <a href="https://github.com/mitzCanCode/Anvil" target="_blank" rel="noopener noreferrer" class="menu-item flex items-center gap-2.5 text-2xl font-bold text-black dark:text-white hover:text-purple-500 transition-colors">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </nav>
+</div>
+
+<!-- Hero -->
+<div class="relative flex min-h-screen flex-col lg:flex-row lg:items-stretch">
+  <div aria-hidden="true" class="accent-blob-1 pointer-events-none absolute -top-20 -right-20 -z-10 h-[600px] w-[600px] rounded-full bg-purple-500/[0.08] dark:bg-purple-500/[0.20] blur-[100px]"></div>
+  <div aria-hidden="true" class="accent-blob-3 pointer-events-none absolute bottom-0 -left-32 -z-10 h-[500px] w-[500px] rounded-full bg-purple-500/[0.06] dark:bg-purple-500/[0.15] blur-[120px]"></div>
+
+  <!-- Hero text (left half) -->
+  <div class="flex w-full lg:w-1/2 min-h-[70vh] lg:min-h-0 items-center justify-center px-6 pt-24 lg:px-8 lg:pt-0">
+    <div class="max-w-xl text-center lg:text-left">
+      <h1 class="fade-in text-4xl font-bold tracking-tight text-black dark:text-white sm:text-7xl">
+        Anvil
+      </h1>
+      <p id="typed-sub" class="mt-8 text-lg text-black/60 dark:text-white/60 sm:text-xl opacity-0 transition-opacity duration-1000">The multi-tool for your coding journey. Watch your websites and APIs, keep an eye on your repos, and carry the small utilities you always end up needing. Open source, locally first, always free.</p>
+      <div id="hero-cta" class="mt-10 flex items-center justify-center lg:justify-start gap-x-6 opacity-0 transition-opacity duration-1000 delay-300">
+        <a href="https://apps.apple.com/app/anvil" target="_blank" rel="noopener noreferrer" class="rounded-md bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black shadow-lg shadow-black/20 dark:shadow-white/20 hover:bg-purple-500 dark:hover:text-white transition-colors">Get the app</a>
+        <a href="https://github.com/mitzCanCode/Anvil" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-black dark:text-white hover:text-purple-500 transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          Source
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating mascot scene (right half) -->
+  <div class="hero__scene">
+    <div class="anvil-scene">
+      <img src="/assets/anvil/coffee.png" alt="" aria-hidden="true" class="anvil-scene__item anvil-scene__coffee">
+      <img src="/assets/anvil/glasses.png" alt="" aria-hidden="true" class="anvil-scene__item anvil-scene__glasses">
+      <img src="/assets/anvil/anvil.png" alt="The Anvil mascot, floating with headphones on" class="anvil-scene__item anvil-scene__anvil">
+      <img src="/assets/anvil/laptop.png" alt="" aria-hidden="true" class="anvil-scene__item anvil-scene__laptop">
+    </div>
+  </div>
+</div>
+
+<!-- About -->
+<section class="relative py-24 px-6 lg:px-8 min-h-screen flex items-center justify-center">
+  <div aria-hidden="true" class="accent-blob-2 pointer-events-none absolute -bottom-20 -left-40 -z-10 h-[500px] w-[500px] rounded-full bg-purple-500/[0.08] dark:bg-purple-500/[0.20] blur-[100px]"></div>
+  <div class="mx-auto max-w-4xl fade-in w-full">
+    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-black/50 dark:text-white/50">What is Anvil?</p>
+    <h2 class="mt-5 text-3xl font-bold leading-tight tracking-tight text-black dark:text-white sm:text-4xl">
+      <span class="fade-in">
+        Your side projects, watched from your pocket.
+      </span>
+    </h2>
+    <div class="space-y-8 lg:space-y-10 mt-8">
+      <p class="fade-in text-lg lg:text-xl text-black/60 dark:text-white/60 leading-8 lg:leading-10">Anvil is an iOS toolbelt for developers. Point it at the websites and APIs you care about and it checks them on a schedule — status codes, response bodies and response times — then taps you on the shoulder only when something actually looks wrong.</p>
+      <p class="fade-in text-lg lg:text-xl text-black/60 dark:text-white/60 leading-8 lg:leading-10">Connect a GitHub token and you also get a dashboard of your profile and repositories. Skip it and everything else still works, because Anvil has no accounts, no backend and nothing to sign up for. The entire app is open source, so you can verify all of that yourself.</p>
+      <p class="fade-in text-lg lg:text-xl text-black/60 dark:text-white/60 leading-8 lg:leading-10">The rest is the stuff you reach for between tasks: a colour palette generator with live app previews, a regex builder, and a calculator that speaks bytes and bandwidth instead of just numbers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Features split section -->
+<section id="features" class="relative px-6 py-24 lg:px-8 min-h-screen lg:min-h-[820vh]">
+  <div aria-hidden="true" class="accent-blob-1 pointer-events-none absolute top-[10%] -left-40 -z-10 h-[600px] w-[600px] rounded-full bg-purple-500/[0.08] dark:bg-purple-500/[0.20] blur-[100px]"></div>
+  <div aria-hidden="true" class="accent-blob-2 pointer-events-none absolute top-[50%] -right-32 -z-10 h-[500px] w-[500px] rounded-full bg-purple-500/[0.06] dark:bg-purple-500/[0.15] blur-[120px]"></div>
+  <div aria-hidden="true" class="accent-blob-3 pointer-events-none absolute top-[85%] left-1/4 -z-10 h-[500px] w-[600px] rounded-full bg-purple-500/[0.06] dark:bg-purple-500/[0.15] blur-[120px]"></div>
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
+    <div class="fade-in lg:sticky lg:top-1/2 lg:-translate-y-1/2 lg:flex lg:h-fit lg:flex-col lg:items-start lg:justify-center">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-black/50 dark:text-white/50">Features</p>
+      <h2 class="mt-5 max-w-md text-3xl font-bold leading-tight tracking-tight text-black dark:text-white sm:text-4xl">
+        <span class="fade-in">
+          One app for the tools you keep hunting for
+        </span>
+      </h2>
+    </div>
+
+    <div class="fade-in">
+      <div class="space-y-[90vh]">
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-10 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">001</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">CHECKPOINTS</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Add a website or API endpoint as a checkpoint and Anvil watches its status code, body and latency for you.</p>
+        </article>
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-20 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">002</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">RESPONSE DIFFS</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Capture a baseline response and see a unified diff the moment it changes — line by line, header by header.</p>
+        </article>
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-30 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">003</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">IGNORE THE NOISE</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Timestamps, build hashes, rotating cookies — mark the lines and headers that always change so only real regressions get flagged.</p>
+        </article>
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-40 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">004</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">BACKGROUND CHECKS</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Run checks every five minutes, once a day, or only when you ask. Anvil keeps checking in the background and stays quiet while everything is healthy.</p>
+        </article>
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-50 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">005</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">SLOW RESPONSE ALERTS</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Set how much extra latency is unacceptable and get told when an endpoint is technically up but crawling.</p>
+        </article>
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-60 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">006</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">GITHUB DASHBOARD</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Connect a personal access token to browse your profile, repositories and code stats from your phone. Entirely optional.</p>
+        </article>
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-70 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">007</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">PALETTE GENERATOR</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Build light and dark palettes side by side, preview them on real app layouts, and export the whole thing as JSON.</p>
+        </article>
+        <article class="service-card sticky top-1/2 -translate-y-1/2 z-80 mx-auto flex h-80 w-full max-w-xl flex-col justify-center rounded-3xl border border-black/10 bg-white/95 p-8 shadow-md backdrop-blur dark:border-white/10 dark:bg-neutral-900/90 sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-500">008</p>
+          <h3 class="mt-2 text-2xl font-bold text-black dark:text-white">REGEX &amp; CONVERSIONS</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-black/60 dark:text-white/60">Assemble regular expressions from tokens and presets, and convert between bytes, bandwidth and the other units that never stick in your head.</p>
+        </article>
+        <div class="h-screen"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Anvil - Values Section -->
+<section id="values-section" class="relative px-6 py-24 lg:px-8 min-h-screen flex items-center justify-center">
+  <div aria-hidden="true" class="accent-blob-3 pointer-events-none absolute -bottom-20 -right-20 -z-10 h-[500px] w-[600px] rounded-full bg-purple-500/[0.08] dark:bg-purple-500/[0.20] blur-[100px]"></div>
+  <div aria-hidden="true" class="accent-blob-1 pointer-events-none absolute -top-20 -left-32 -z-10 h-[400px] w-[400px] rounded-full bg-purple-500/[0.06] dark:bg-purple-500/[0.15] blur-[120px]"></div>
+  <div class="mx-auto max-w-6xl w-full">
+    <div class="flex flex-col lg:flex-row items-center gap-12">
+      <!-- Values section text -->
+      <div class="fade-in w-full lg:w-1/2 lg:top-1/2 lg:-translate-y-1/2 lg:flex lg:h-fit lg:flex-col lg:items-start lg:justify-center">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-black/50 dark:text-white/50">Why Anvil</p>
+        <h2 class="mt-5 max-w-md text-3xl font-bold leading-tight tracking-tight text-black dark:text-white sm:text-4xl">
+          <span class="fade-in">
+            Built by a developer, for developers
+          </span>
+        </h2>
+      </div>
+
+      <!-- Carousel Container -->
+      <div class="w-full lg:w-1/2 relative">
+        <!-- Values Cards Carousel -->
+        <div id="values-carousel" class="relative overflow-visible">
+          <!-- Card 1: Everything stays on device -->
+          <div class="carousel-slide active absolute inset-0 rounded-2xl border border-black/10 bg-white/95 dark:bg-neutral-900/90 shadow-md backdrop-blur dark:border-white/10 p-8 lg:p-10" data-index="0">
+            <div class="mb-4 flex items-center gap-3">
+              <h3 class="text-2xl font-bold text-black dark:text-white">Everything stays on device</h3>
+            </div>
+            <div class="flex items-center gap-2 mb-6">
+              <div class="w-1 h-6 bg-purple-500"></div>
+              <p class="text-base font-semibold text-black dark:text-white">No backend. No account. No analytics.</p>
+            </div>
+            <p class="text-base text-black/60 dark:text-white/60 leading-relaxed">Your checkpoints are stored locally and your GitHub token lives in the iOS Keychain. Requests go straight from your phone to GitHub or to the URLs you configured — never through a server of mine.</p>
+          </div>
+
+          <!-- Card 2: Quiet by default -->
+          <div class="carousel-slide absolute inset-0 rounded-2xl border border-black/10 bg-white/95 dark:bg-neutral-900/90 shadow-md backdrop-blur dark:border-white/10 p-8 lg:p-10" data-index="1">
+            <div class="mb-4 flex items-center gap-3">
+              <h3 class="text-2xl font-bold text-black dark:text-white">Quiet by default</h3>
+            </div>
+            <div class="flex items-center gap-2 mb-6">
+              <div class="w-1 h-6 bg-purple-500"></div>
+              <p class="text-base font-semibold text-black dark:text-white">Alerts only when something is off.</p>
+            </div>
+            <p class="text-base text-black/60 dark:text-white/60 leading-relaxed">Healthy checks stay silent. Notifications are reserved for unreachable endpoints, server errors, unexpected content changes and responses that have slowed past your threshold.</p>
+          </div>
+
+          <!-- Card 3: Free and always improving -->
+          <div class="carousel-slide absolute inset-0 rounded-2xl border border-black/10 bg-white/95 dark:bg-neutral-900/90 shadow-md backdrop-blur dark:border-white/10 p-8 lg:p-10" data-index="2">
+            <div class="mb-4 flex items-center gap-3">
+              <h3 class="text-2xl font-bold text-black dark:text-white">Free and open source</h3>
+            </div>
+            <div class="flex items-center gap-2 mb-6">
+              <div class="w-1 h-6 bg-purple-500"></div>
+              <p class="text-base font-semibold text-black dark:text-white">No subscriptions, no ads, nothing hidden.</p>
+            </div>
+            <p class="text-base text-black/60 dark:text-white/60 leading-relaxed">Anvil is a solo project, built in SwiftUI out of the tools I kept wishing I had on my phone. The full source is on GitHub — read it, audit it, file an issue or send a pull request.</p>
+          </div>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="mt-8 flex items-center justify-center gap-4">
+          <button id="values-prev" class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-purple-500 hover:border-purple-500 transition-colors" aria-label="Previous card">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <div id="values-indicators" class="flex gap-2">
+            <!-- Indicators will be generated by JS -->
+          </div>
+          <button id="values-next" class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-black/20 dark:border-white/20 text-black dark:text-white hover:bg-purple-500 hover:border-purple-500 transition-colors" aria-label="Next card">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5L15.75 12l-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section id="cta-section" class="relative px-6 py-24 lg:px-8 min-h-screen flex items-center justify-center">
+  <div aria-hidden="true" class="accent-blob-1 pointer-events-none absolute top-1/4 -left-32 -z-10 h-[500px] w-[500px] rounded-full bg-purple-500/[0.08] dark:bg-purple-500/[0.20] blur-[100px]"></div>
+  <div aria-hidden="true" class="accent-blob-3 pointer-events-none absolute -bottom-20 -right-20 -z-10 h-[400px] w-[500px] rounded-full bg-purple-500/[0.06] dark:bg-purple-500/[0.15] blur-[120px]"></div>
+  <div class="mx-auto max-w-4xl text-center fade-in">
+    <h1 class="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-7xl">
+      Anvil
+    </h1>
+    <p class="mt-8 text-lg text-black/60 dark:text-white/60 sm:text-xl">No hiker leaves without a multi-tool — so why code without one? Anvil is free on the App Store and open source on GitHub.</p>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+      <a href="https://apps.apple.com/app/anvil" target="_blank" rel="noopener noreferrer" class="rounded-md bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black shadow-lg shadow-black/20 dark:shadow-white/20 hover:bg-purple-500 dark:hover:text-white transition-colors">Get the app</a>
+      <a href="https://github.com/mitzCanCode/Anvil" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-md border border-black/20 dark:border-white/20 px-5 py-3 text-sm font-semibold text-black dark:text-white hover:border-purple-500 hover:text-purple-500 transition-colors">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View source
+      </a>
+      <a href="about.html" class="text-sm font-semibold text-black dark:text-white hover:text-purple-500 transition-colors">About the project <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Mobile menu
+  const mobileMenu = document.getElementById('mobile-menu');
+  document.getElementById('mobile-menu-btn').addEventListener('click', () => mobileMenu.classList.add('open'));
+  document.getElementById('mobile-menu-close').addEventListener('click', () => mobileMenu.classList.remove('open'));
+
+  // Fade in subtitle + CTA on load
+  requestAnimationFrame(() => {
+    document.getElementById('typed-sub').classList.replace('opacity-0', 'opacity-100');
+    document.getElementById('hero-cta').classList.replace('opacity-0', 'opacity-100');
+  });
+
+  // Values section carousel
+  const carousel = document.getElementById('values-carousel');
+  const slides = document.querySelectorAll('.carousel-slide');
+  const prevBtn = document.getElementById('values-prev');
+  const nextBtn = document.getElementById('values-next');
+  const indicatorsContainer = document.getElementById('values-indicators');
+
+  let currentSlide = 0;
+  let autoPlayTimer;
+  const SLIDE_DURATION = 5000; // 5 seconds per slide
+
+  // Generate indicators
+  slides.forEach((_, index) => {
+    const indicator = document.createElement('button');
+    indicator.className = `w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-purple-500 w-6' : 'bg-black/20 dark:bg-white/20'}`;
+    indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
+    indicator.addEventListener('click', () => {
+      clearTimeout(autoPlayTimer);
+      goToSlide(index);
+      startAutoPlay();
+    });
+    indicatorsContainer.appendChild(indicator);
+  });
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      if (i === index) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    // Update indicators
+    document.querySelectorAll('#values-indicators button').forEach((btn, i) => {
+      if (i === index) {
+        btn.classList.remove('bg-black/20', 'dark:bg-white/20', 'w-2');
+        btn.classList.add('bg-purple-500', 'w-6');
+      } else {
+        btn.classList.remove('bg-purple-500', 'w-6');
+        btn.classList.add('bg-black/20', 'dark:bg-white/20', 'w-2');
+      }
+    });
+  }
+
+  function goToSlide(index) {
+    currentSlide = (index + slides.length) % slides.length;
+    showSlide(currentSlide);
+  }
+
+  function nextSlide() {
+    goToSlide(currentSlide + 1);
+  }
+
+  function prevSlide() {
+    goToSlide(currentSlide - 1);
+  }
+
+  function startAutoPlay() {
+    autoPlayTimer = setTimeout(() => {
+      nextSlide();
+      startAutoPlay();
+    }, SLIDE_DURATION);
+  }
+
+  // Event listeners for navigation buttons
+  nextBtn.addEventListener('click', () => {
+    clearTimeout(autoPlayTimer);
+    nextSlide();
+    startAutoPlay();
+  });
+
+  prevBtn.addEventListener('click', () => {
+    clearTimeout(autoPlayTimer);
+    prevSlide();
+    startAutoPlay();
+  });
+
+  // Pause autoplay on hover
+  carousel.addEventListener('mouseenter', () => {
+    clearTimeout(autoPlayTimer);
+  });
+
+  carousel.addEventListener('mouseleave', () => {
+    startAutoPlay();
+  });
+
+  // Initialize carousel - first slide is already marked with active class
+  startAutoPlay();
+
+  // Dynamic glow tracking for values and services
+  (function initGlowTracking() {
+    function applyGlow(cards, isCarousel) {
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          if (isCarousel && !card.classList.contains('active')) return;
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.filter =
+            `drop-shadow(${x * 25}px ${y * 25}px 20px rgba(147, 51, 234, 0.3))`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.filter = '';
+        });
+      });
+    }
+
+    applyGlow(document.querySelectorAll('.carousel-slide'), true);
+    applyGlow(document.querySelectorAll('.service-card'), false);
+  })();
+
+  // Scroll-triggered fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('fade-in-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+<!-- Footer -->
+<footer class="py-16 px-6 lg:px-8 border-t border-black/5 dark:border-white/5">
+  <div class="mx-auto max-w-5xl">
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Brand -->
+      <div class="sm:col-span-2 lg:col-span-1">
+        <a href="index.html" class="flex items-center gap-2 text-lg font-bold tracking-tight text-black dark:text-white">
+          <img src="/assets/logo.png" alt="Anvil logo" class="h-7 w-auto">
+          Anvil
+        </a>
+        <p class="mt-3 text-sm text-black/50 dark:text-white/50 leading-6">The multi-tool for your coding journey. Built solo, open source, for developers.</p>
+      </div>
+
+      <!-- Product -->
+      <div>
+        <h4 class="text-sm font-bold text-black dark:text-white">Product</h4>
+        <ul class="mt-3 space-y-2 text-sm text-black/60 dark:text-white/50">
+          <li><a href="about.html" class="hover:text-purple-500 transition-colors">About</a></li>
+          <li><a href="https://apps.apple.com/app/anvil" target="_blank" rel="noopener noreferrer" class="hover:text-purple-500 transition-colors">Download</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div>
+        <h4 class="text-sm font-bold text-black dark:text-white">Legal</h4>
+        <ul class="mt-3 space-y-2 text-sm text-black/60 dark:text-white/50">
+          <li><a href="legal.html#privacy" class="hover:text-purple-500 transition-colors">Privacy Policy</a></li>
+          <li><a href="legal.html#terms" class="hover:text-purple-500 transition-colors">Terms of Service</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h4 class="text-sm font-bold text-black dark:text-white">Contact</h4>
+        <ul class="mt-3 space-y-2 text-sm text-black/60 dark:text-white/50">
+          <li>
+            <a href="mailto:dimitris.chatzi@proton.me" class="inline-flex items-center gap-3 hover:text-purple-500 transition-colors">
+              <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M4 7l8 6 8-6" />
+              </svg>
+              <span>dimitris.chatzi@proton.me</span>
+            </a>
+          </li>
+          <li><a href="contact.html" class="hover:text-purple-500 transition-colors">Support &amp; feedback</a></li>
+          <li><a href="https://github.com/mitzCanCode/Anvil" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 hover:text-purple-500 transition-colors">
+            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 border-t border-black/5 dark:border-white/5 pt-6 text-sm text-black/40 dark:text-white/40">
+      <p>&copy; <span id="footer-year">2026</span> Anvil. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Footer year
+  (function setFooterYear() {
+    const el = document.getElementById('footer-year');
+    if (el) el.textContent = new Date().getFullYear();
+  })();
+</script>
+</body>
+</html>

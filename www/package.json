@@ -1,0 +1,19 @@
+{
+  "name": "anvil",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build:css && vite",
+    "build": "npm run build:css && vite build",
+    "preview": "vite preview",
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/output.css"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2",
+    "vite": "^8.0.4"
+  }
+}
