@@ -219,3 +219,7 @@ config.json
 *.backup
 *.bak
 *.orig
+
+# Node.js 
+node_modules/
+www/dist/

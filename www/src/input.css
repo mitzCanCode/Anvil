@@ -163,7 +163,7 @@
 
 /* ============================
    Floating mascot scene
-   Mirrors the app's old sign-in screen: the anvil bobs in the middle
+   Mirrors the app's old sign-in screen: the devpoint bobs in the middle
    while the coffee, glasses and laptop drift around it at their own
    pace, each with a slightly different duration so the loop never
    looks synchronized.
@@ -183,19 +183,19 @@
   }
 }
 
-.anvil-scene {
+.devpoint-scene {
   position: relative;
   width: min(78vw, 320px);
   aspect-ratio: 1 / 1;
 }
 
 @media (min-width: 1024px) {
-  .anvil-scene {
+  .devpoint-scene {
     width: min(34vw, 460px);
   }
 }
 
-.anvil-scene__item {
+.devpoint-scene__item {
   position: absolute;
   width: auto;
   height: auto;
@@ -205,21 +205,21 @@
   will-change: transform;
 }
 
-.anvil-scene__anvil {
+.devpoint-scene__devpoint {
   width: 76%;
   left: 12%;
   top: 20%;
-  animation: anvilFloat 2.8s ease-in-out infinite alternate;
+  animation: devpointFloat 2.8s ease-in-out infinite alternate;
 }
 
-.anvil-scene__coffee {
+.devpoint-scene__coffee {
   width: 24%;
   left: 0;
   top: 4%;
   animation: coffeeFloat 3.1s ease-in-out infinite alternate;
 }
 
-.anvil-scene__glasses {
+.devpoint-scene__glasses {
   width: 22%;
   right: 2%;
   top: 10%;
@@ -227,7 +227,7 @@
   animation-delay: 0.2s;
 }
 
-.anvil-scene__laptop {
+.devpoint-scene__laptop {
   width: 26%;
   left: 26%;
   bottom: 2%;
@@ -235,7 +235,7 @@
   animation-delay: 0.4s;
 }
 
-@keyframes anvilFloat {
+@keyframes devpointFloat {
   from { transform: translateY(-10px) rotate(-7deg); }
   to { transform: translateY(10px) rotate(-1deg); }
 }
@@ -256,8 +256,8 @@
 }
 
 /* Standalone bobbing mascot (about page hero) */
-.anvil-bob {
-  animation: anvilFloat 2.8s ease-in-out infinite alternate;
+.devpoint-bob {
+  animation: devpointFloat 2.8s ease-in-out infinite alternate;
   filter: drop-shadow(0 18px 30px rgba(var(--accent-rgb), 0.2));
 }
 
@@ -265,8 +265,8 @@
   .accent-blob-1,
   .accent-blob-2,
   .accent-blob-3,
-  .anvil-scene__item,
-  .anvil-bob,
+  .devpoint-scene__item,
+  .devpoint-bob,
   .carousel-slide.active,
   .dark .carousel-slide.active {
     animation: none !important;
