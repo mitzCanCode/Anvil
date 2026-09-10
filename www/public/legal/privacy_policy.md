@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last updated: [DATE]**
+**Last updated: 10/09/2026**
 
 DevPoint ("we", "us", or "our") is an independent iOS application developed by Dimitris Chatzigeorgiou ("the Developer"). We are committed to protecting your privacy. This Privacy Policy explains how information is collected, used, and protected when you use the DevPoint mobile application (the "App" or "Service").
 

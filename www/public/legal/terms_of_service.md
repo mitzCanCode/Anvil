@@ -1,6 +1,6 @@
 # Terms of Service
 
-**Last updated: [DATE]**
+**Last updated: 10/09/2026**
 
 DevPoint is an iOS application developed and operated by Dimitris Chatzigeorgiou, an individual developer ("we", "us", "our", "the Developer").
 
